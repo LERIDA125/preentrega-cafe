@@ -1,11 +1,20 @@
 import { useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { CartContext } from '../../context/CartContext'
+import { formatPrice } from '../../utils/format'
 
 const Carrito = () => {
-  const { carrito } = useContext(CartContext)
+  const { carrito, removeItem, clearCart } = useContext(CartContext)
 
   if (carrito.length === 0) {
-    return <div>Tu carrito está vacío</div>
+    return (
+      <div className="carrito-vacio">
+        <span className="big-coffee" aria-hidden="true">☕</span>
+        <h2>Tu carrito está vacío</h2>
+        <p>Explorá nuestro catálogo y agregá tus cafés favoritos.</p>
+        <Link to="/" className="btn-ghost">← Ir al catálogo</Link>
+      </div>
+    )
   }
 
   const total = carrito.reduce(
@@ -14,16 +23,37 @@ const Carrito = () => {
   )
 
   return (
-    <div>
+    <div className="carrito-contenedor">
+      <h2 className="carrito-heading">Tu carrito</h2>
+
       {carrito.map((item) => (
-        <article key={item.id}>
-          <img src={item.imagen} alt={item.nombre} width="80" />
-          <h3>{item.nombre}</h3>
-          <p>Cantidad: {item.cantidad}</p>
-          <p>Subtotal: ${item.precio * item.cantidad}</p>
+        <article className="carrito-item" key={item.id}>
+          <img src={item.imagen} alt={item.nombre} className="carrito-item-img" />
+          <div className="carrito-item-body">
+            <h3 className="carrito-item-nombre">{item.nombre}</h3>
+            <p className="carrito-item-info">Cantidad: {item.cantidad}</p>
+            <p className="carrito-item-sub">
+              Subtotal: {formatPrice(item.precio * item.cantidad)}
+            </p>
+          </div>
+          <button
+            onClick={() => removeItem(item.id)}
+            className="carrito-item-remove"
+            aria-label={`Quitar ${item.nombre} del carrito`}
+          >
+            ✕
+          </button>
         </article>
       ))}
-      <p>Total a pagar: ${total}</p>
+
+      <div className="carrito-total">
+        <span>Total a pagar</span>
+        <span>{formatPrice(total)}</span>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+        <button onClick={clearCart} className="btn-ghost">Vaciar carrito</button>
+      </div>
     </div>
   )
 }

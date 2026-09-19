@@ -22,11 +22,11 @@ const ItemDetailContainer = () => {
   }, [id])
 
   if (cargando) {
-    return <div>Cargando producto...</div>
+    return <div className="estado">Cargando producto...</div>
   }
 
   if (!producto) {
-    return <div>Producto no encontrado</div>
+    return <div className="estado">Producto no encontrado</div>
   }
 
   return <ItemDetail producto={producto} />

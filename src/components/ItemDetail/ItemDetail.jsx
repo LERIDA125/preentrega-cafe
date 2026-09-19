@@ -1,6 +1,7 @@
-import { useState } from 'react'
-import { useContext } from 'react'
+import { useState, useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { CartContext } from '../../context/CartContext'
+import { formatPrice } from '../../utils/format'
 
 const ItemDetail = ({ producto }) => {
   const { nombre, descripcion, precio, imagen, categoria, stock } = producto
@@ -15,17 +16,31 @@ const ItemDetail = ({ producto }) => {
   }
 
   return (
-    <article>
-      <img src={imagen} alt={nombre} />
-      <h2>{nombre}</h2>
-      <p>{categoria}</p>
-      <p>{descripcion}</p>
-      <p>Precio: ${precio}</p>
-      <p>Stock disponible: {stock}</p>
-      <button onClick={restar}>-</button>
-      <span>{cantidad}</span>
-      <button onClick={sumar}>+</button>
-      <button onClick={handleAgregar}>Agregar al Carrito</button>
+    <article className="detail-card">
+      <div className="detail-media">
+        <img src={imagen} alt={nombre} />
+      </div>
+      <div className="detail-info">
+        <span className="detail-cat">{categoria}</span>
+        <h2 className="detail-title">{nombre}</h2>
+        <p className="detail-desc">{descripcion}</p>
+        <p className="detail-price">
+          <small>Precio:</small> {formatPrice(precio)}
+        </p>
+        <p className="detail-stock">
+          Stock disponible: <span className="ok">{stock}</span>
+        </p>
+
+        <div className="qty-group">
+          <button onClick={restar} className="qty-btn" aria-label="Restar cantidad">−</button>
+          <span className="qty-value">{cantidad}</span>
+          <button onClick={sumar} className="qty-btn" aria-label="Sumar cantidad">+</button>
+        </div>
+
+        <button onClick={handleAgregar} className="btn-primary">Agregar al Carrito</button>
+
+        <Link to="/" className="btn-back">← Volver al catálogo</Link>
+      </div>
     </article>
   )
 }

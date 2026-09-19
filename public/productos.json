@@ -1,56 +1,56 @@
 [
   {
-    "id": 1,
-    "nombre": "Colombia Supremo",
-    "descripcion": "Café arábica de taza suave con notas de caramelo y nuez.",
-    "precio": 12000,
-    "imagen": "https://placehold.co/300x300?text=Colombia",
-    "categoria": "Origen",
-    "stock": 20
+    "id": "1",
+    "nombre": "Espresso de Especialidad",
+    "descripcion": "Intenso y con cuerpo, preparado con granos de tueste oscuro de origen colombiano.",
+    "precio": 2500,
+    "imagen": "/img/1-espresso.jpg",
+    "categoria": "Calientes",
+    "stock": 25
   },
   {
-    "id": 2,
-    "nombre": "Brasil Santos",
-    "descripcion": "Tostado medio, cuerpo aterciopelado y notas a chocolate.",
-    "precio": 9800,
-    "imagen": "https://placehold.co/300x300?text=Brasil",
-    "categoria": "Origen",
+    "id": "2",
+    "nombre": "Cappuccino Italiano",
+    "descripcion": "Perfecto equilibrio entre espresso, leche vaporizada y una capa gruesa de espuma.",
+    "precio": 3200,
+    "imagen": "/img/2-cappuccino.jpg",
+    "categoria": "Calientes",
     "stock": 15
   },
   {
-    "id": 3,
-    "nombre": "Etiopía Yirgacheffe",
-    "descripcion": "Café floral con notas cítricas y final dulce.",
-    "precio": 14500,
-    "imagen": "https://placehold.co/300x300?text=Etiopia",
-    "categoria": "Origen",
+    "id": "3",
+    "nombre": "Café de Filtro (Chemex)",
+    "descripcion": "Extracción limpia y brillante que resalta las notas florales y frutales del grano.",
+    "precio": 3500,
+    "imagen": "/img/3-filtro.jpg",
+    "categoria": "Filtrados",
     "stock": 10
   },
   {
-    "id": 4,
-    "nombre": "Guatemala Antigua",
-    "descripcion": "Taza compleja con cuerpo completo y notas a cacao.",
-    "precio": 13200,
-    "imagen": "https://placehold.co/300x300?text=Guatemala",
-    "categoria": "Origen",
+    "id": "4",
+    "nombre": "Flat White",
+    "descripcion": "Doble ristretto con una fina capa de leche texturizada. Sabor sedoso e intenso.",
+    "precio": 3300,
+    "imagen": "/img/4-flat-white.jpg",
+    "categoria": "Calientes",
+    "stock": 18
+  },
+  {
+    "id": "5",
+    "nombre": "Iced Caramel Macchiato",
+    "descripcion": "Refrescante combinación de leche helada, espresso, vainilla y un toque de caramelo.",
+    "precio": 3800,
+    "imagen": "/img/5-iced.jpg",
+    "categoria": "Fríos",
     "stock": 12
   },
   {
-    "id": 5,
-    "nombre": "Café Torrado Intenso",
-    "descripcion": "Mezcla para espresso con cuerpo intenso y crema dorada.",
-    "precio": 8200,
-    "imagen": "https://placehold.co/300x300?text=Torrado",
-    "categoria": "Mezcla",
+    "id": "6",
+    "nombre": "Bolsa Granos Tueste Medio",
+    "descripcion": "Llevate la experiencia a casa. 250g de granos de especialidad origen Brasil.",
+    "precio": 8500,
+    "imagen": "/img/6-granos.jpg",
+    "categoria": "Para llevar",
     "stock": 30
-  },
-  {
-    "id": 6,
-    "nombre": "Descafeinado Suave",
-    "descripcion": "Proceso natural de descafeinado, ideal para la noche.",
-    "precio": 10500,
-    "imagen": "https://placehold.co/300x300?text=Descafeinado",
-    "categoria": "Descafeinado",
-    "stock": 18
   }
 ]
