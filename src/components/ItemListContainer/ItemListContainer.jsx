@@ -48,25 +48,43 @@ const ItemListContainer = () => {
   return (
     <>
       <section className="hero">
-        <img className="hero-bg" src="/img/hero.jpg" alt="" aria-hidden="true" />
-        <div className="hero-overlay" aria-hidden="true" />
-        <div className="hero-content">
-          <span className="hero-eyebrow">Especialidad en grano</span>
-          <h1 className="hero-title">
-            El café que <em>despierta</em> tus sentidos
-          </h1>
-          <p className="hero-subtitle">
-            Granos seleccionados, tostados artesanalmente y preparados por
-            baristas apasionados. Del campo directo a tu taza.
-          </p>
-          <a className="hero-cta" href="#catalogo">Ver catálogo</a>
+        <div className="hero-inner">
+          <div className="hero-copy">
+            <p className="hero-annotation">Café de especialidad en grano</p>
+            <h1 className="hero-title">
+              Del grano verde a tu taza
+            </h1>
+            <p className="hero-subtitle">
+              Granos de especialidad, tostados en lotes chicos al momento de tu
+              pedido. Del tostador directo a tu taza, sin estantes de por medio.
+            </p>
+            <a className="hero-cta" href="#catalogo">Ver catálogo</a>
+            <dl className="hero-lote">
+              <div>
+                <dt>Origen</dt>
+                <dd>Colombia, Huila</dd>
+              </div>
+              <div>
+                <dt>Tueste</dt>
+                <dd>Medio</dd>
+              </div>
+              <div>
+                <dt>Notas</dt>
+                <dd>Caramelo y cacao</dd>
+              </div>
+            </dl>
+          </div>
+          <figure className="hero-foto">
+            <img src="/img/hero.jpg" alt="Café de especialidad recién servido" />
+            <span className="hero-stamp" aria-hidden="true">Lote 063</span>
+            <figcaption>Tueste de la semana, servido recién hecho</figcaption>
+          </figure>
         </div>
       </section>
 
       <section className="catalog-section" id="catalogo">
         <div className="catalog-heading">
           <h2>{titulo}</h2>
-          <span className="dot">•</span>
         </div>
 
         {!cargando && (

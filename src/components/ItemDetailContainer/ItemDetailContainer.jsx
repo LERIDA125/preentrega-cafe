@@ -11,7 +11,7 @@ const ItemDetailContainer = () => {
     fetch('/productos.json')
       .then((respuesta) => respuesta.json())
       .then((datos) => {
-        const encontrado = datos.find((item) => item.id === Number(id))
+        const encontrado = datos.find((item) => String(item.id) === String(id))
         setProducto(encontrado || null)
         setCargando(false)
       })

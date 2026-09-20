@@ -24,12 +24,19 @@ const ItemDetail = ({ producto }) => {
         <span className="detail-cat">{categoria}</span>
         <h2 className="detail-title">{nombre}</h2>
         <p className="detail-desc">{descripcion}</p>
-        <p className="detail-price">
-          <small>Precio:</small> {formatPrice(precio)}
-        </p>
-        <p className="detail-stock">
-          Stock disponible: <span className="ok">{stock}</span>
-        </p>
+
+        <dl className="ficha-lote">
+          <div>
+            <dt>Precio</dt>
+            <dd>{formatPrice(precio)}</dd>
+          </div>
+          <div>
+            <dt>Stock disponible</dt>
+            <dd>
+              <span className="ok">{stock}</span> unidades
+            </dd>
+          </div>
+        </dl>
 
         <div className="qty-group">
           <button onClick={restar} className="qty-btn" aria-label="Restar cantidad">−</button>

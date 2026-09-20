@@ -9,7 +9,7 @@ const Carrito = () => {
   if (carrito.length === 0) {
     return (
       <div className="carrito-vacio">
-        <span className="big-coffee" aria-hidden="true">☕</span>
+        <span className="nota" aria-hidden="true">Todavía no hay nada acá</span>
         <h2>Tu carrito está vacío</h2>
         <p>Explorá nuestro catálogo y agregá tus cafés favoritos.</p>
         <Link to="/" className="btn-ghost">← Ir al catálogo</Link>
@@ -51,8 +51,9 @@ const Carrito = () => {
         <span>{formatPrice(total)}</span>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+      <div className="carrito-acciones">
         <button onClick={clearCart} className="btn-ghost">Vaciar carrito</button>
+        <Link to="/checkout" className="btn-primary">Ir al checkout</Link>
       </div>
     </div>
   )
