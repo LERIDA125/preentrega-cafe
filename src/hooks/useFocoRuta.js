@@ -1,13 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import Header from '../Header/Header'
-import Footer from '../Footer/Footer'
 
 /**
- * Cada cambio de ruta deja la página arriba y pone el foco en el contenido, así
- * que quien navega con teclado o lector de pantalla no queda perdido.
+ * Comportamiento de navegación compartido por los layouts.
+ *
+ * Al cambiar de ruta respeta el hash si existe; si no, vuelve arriba y lleva el
+ * foco al contenido, para que quien navega con teclado o lector de pantalla no
+ * quede perdido en el lugar anterior.
  */
-const Layout = ({ children }) => {
+export const useFocoRuta = () => {
   const { pathname, hash } = useLocation()
   const mainRef = useRef(null)
   const primera = useRef(true)
@@ -30,15 +31,5 @@ const Layout = ({ children }) => {
     mainRef.current?.focus({ preventScroll: true })
   }, [pathname, hash])
 
-  return (
-    <div className="app">
-      <Header />
-      <main id="contenido" ref={mainRef} tabIndex={-1}>
-        {children}
-      </main>
-      <Footer />
-    </div>
-  )
+  return mainRef
 }
-
-export default Layout
