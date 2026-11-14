@@ -6,7 +6,7 @@
 | Prioridad | P0 |
 | Estimación | 4 h |
 | Dependencias | T-02, T-03 |
-| Estado | ⬜ Pendiente |
+| Estado | ✅ Hecho — 14/11/2026 |
 
 ## Objetivo
 
@@ -54,13 +54,13 @@ Detalles:
 
 ## Criterios de aceptación
 
-- [ ] Todos los campos obligatorios muestran error inline.
-- [ ] Precio, stock y altura aceptan solo números válidos.
-- [ ] `notas` se entrega como array.
-- [ ] El formulario sirve para alta y edición con `initialValues`.
-- [ ] Envío bloqueado mientras `isSubmitting`; sin doble submit.
-- [ ] Los errores no borran lo que el usuario cargó.
-- [ ] Navegable con teclado, con `<label>` asociado a cada input.
+- [x] Todos los campos obligatorios muestran error inline.
+- [x] Precio, stock y altura aceptan solo números válidos.
+- [x] `notas` se entrega como array.
+- [x] El formulario sirve para alta y edición con `initialValues`.
+- [x] Envío bloqueado mientras `isSubmitting`; sin doble submit.
+- [x] Los errores no borran lo que el usuario cargó.
+- [x] Navegable con teclado, con `<label>` asociado a cada input.
 
 ## Verificación manual
 

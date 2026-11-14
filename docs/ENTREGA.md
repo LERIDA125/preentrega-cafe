@@ -311,7 +311,7 @@ Convenciones:
 
 #### T-06 · Componente `ProductForm`
 
-- **Prioridad:** P0 · **Estimación:** 4 h · **Depende de:** T-02, T-03
+- **Prioridad:** P0 · **Estimación:** 4 h · **Depende de:** T-02, T-03 · **Estado:** ✅ Hecho
 - **Qué:** formulario controlado con nombre, descripción, precio, categoría, stock, lote, origen, altura, variedad, proceso, punto, notas e imagen.
 - **Criterios de aceptación:**
   - [ ] Todos los campos obligatorios tienen validación con mensaje inline.
