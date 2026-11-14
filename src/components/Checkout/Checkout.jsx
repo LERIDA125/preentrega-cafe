@@ -15,7 +15,7 @@ import { useTitulo } from '../../hooks/useTitulo'
  */
 const Checkout = () => {
   const { items, subtotal, vaciar } = useCarrito()
-  const [datos, setDatos] = useState({ nombre: '', email: '' })
+  const [datos, setDatos] = useState({ nombre: '', email: '', telefono: '' })
   const [orden, setOrden] = useState(null)
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState(null)
@@ -40,13 +40,17 @@ const Checkout = () => {
     setError(null)
 
     const numero = generarNumeroOrden()
-    const comprador = { nombre: datos.nombre.trim(), email: datos.email.trim() }
+    const comprador = {
+      nombre: datos.nombre.trim(),
+      email: datos.email.trim(),
+      telefono: datos.telefono.trim(),
+    }
     const total = subtotal
 
     try {
-      await createOrder({ numero, buyer: comprador, items, total })
+      const id = await createOrder({ numero, buyer: comprador, items, total })
       vaciar()
-      setOrden({ numero, ...comprador, total })
+      setOrden({ id, numero, ...comprador, total })
     } catch (fallo) {
       setError(fallo.message || 'No pudimos registrar el pedido. Probá de nuevo.')
     } finally {
@@ -60,12 +64,13 @@ const Checkout = () => {
       <div className="hoja">
         <div className="columna">
           <div className="confirmacion">
-            <p className="confirmacion-sello">{orden.numero}</p>
+            <p className="confirmacion-sello">Ticket: {orden.id}</p>
             <h1 className="confirmacion-titulo">Pedido confirmado</h1>
             <p className="confirmacion-texto">
               Gracias{orden.nombre ? `, ${orden.nombre}` : ''}. Tu pedido por{' '}
-              {formatPrice(orden.total)} ya está en el tostador. Te escribimos a{' '}
-              {orden.email || 'tu correo'} con la fecha de envío.
+              {formatPrice(orden.total)} ({orden.numero}) ya está en el tostador. Te escribimos a{' '}
+              {orden.email || 'tu correo'} o al {orden.telefono || 'teléfono registrado'} con la
+              fecha de envío.
             </p>
             <Link to="/" className="boton boton-primario">
               Volver al catálogo
@@ -152,6 +157,19 @@ const Checkout = () => {
                 required
               />
               <span className="campo-ayuda">Ahí te mandamos la confirmación y el seguimiento.</span>
+            </label>
+
+            <label className="campo">
+              <span className="campo-etiqueta">Teléfono</span>
+              <input
+                type="tel"
+                name="telefono"
+                value={datos.telefono}
+                onChange={cambiar}
+                autoComplete="tel"
+                disabled={enviando}
+                required
+              />
             </label>
 
             {error && (
