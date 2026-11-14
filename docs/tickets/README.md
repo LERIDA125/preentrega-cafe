@@ -12,7 +12,7 @@
 |---|---|---|---|---|---|---|
 | [T-01](T-01-configurar-firebase.md) | Configurar Firebase y variables de entorno | 1 | P0 | 2 h | — | ✅ Hecho |
 | [T-02](T-02-servicio-productos.md) | Servicio de productos | 1 | P0 | 3 h | T-01 | ✅ Hecho |
-| [T-03](T-03-servicio-imagenes.md) | Servicio de imágenes | 1 | P0 | 2 h | T-01 | ⬜ Pendiente |
+| [T-03](T-03-servicio-imagenes.md) | Servicio de imágenes | 1 | P0 | 2 h | T-01 | ✅ Hecho |
 | [T-04](T-04-migrar-datoscontext.md) | Migrar `DatosContext` a Firestore | 1 | P0 | 3 h | T-02, T-05 | ⬜ Pendiente |
 | [T-05](T-05-cargar-productos.md) | Cargar los productos existentes | 1 | P0 | 1 h | T-01 | ⬜ Pendiente |
 | [T-06](T-06-product-form.md) | Componente `ProductForm` | 2 | P0 | 4 h | T-02, T-03 | ⬜ Pendiente |

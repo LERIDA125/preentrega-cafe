@@ -6,7 +6,7 @@
 | Prioridad | P0 |
 | Estimación | 2 h |
 | Dependencias | T-01 |
-| Estado | ⬜ Pendiente |
+| Estado | ✅ Hecho — 14/11/2026 |
 
 ## Objetivo
 
@@ -37,11 +37,11 @@ Detalles:
 
 ## Criterios de aceptación
 
-- [ ] Rechaza archivos que no son imagen con un mensaje claro.
-- [ ] Rechaza archivos de más de 2 MB.
-- [ ] Devuelve `downloadURL` usable en `<img src>`.
-- [ ] El nombre del archivo es único (subir dos veces la misma imagen no pisa la anterior).
-- [ ] Error controlado si falla la subida, sin dejar el formulario colgado.
+- [x] Rechaza archivos que no son imagen con un mensaje claro.
+- [x] Rechaza archivos de más de 2 MB.
+- [x] Devuelve `downloadURL` usable en `<img src>`.
+- [x] El nombre del archivo es único (subir dos veces la misma imagen no pisa la anterior).
+- [x] Error controlado si falla la subida, sin dejar el formulario colgado.
 
 ## Verificación manual
 

@@ -277,7 +277,7 @@ Convenciones:
 
 #### T-03 · Servicio de imágenes
 
-- **Prioridad:** P0 · **Estimación:** 2 h · **Depende de:** T-01
+- **Prioridad:** P0 · **Estimación:** 2 h · **Depende de:** T-01 · **Estado:** ✅ Hecho
 - **Qué:** crear `src/services/imageService.js` con `uploadProductImage(file)` que suba a Storage y devuelva la URL pública.
 - **Criterios de aceptación:**
   - [ ] Valida tipo (`image/*`) y tamaño máximo (por ejemplo 2 MB).
