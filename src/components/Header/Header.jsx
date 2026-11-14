@@ -2,7 +2,7 @@ import NavBar from '../NavBar/NavBar'
 
 const Header = () => {
   return (
-    <header className="site-header">
+    <header className="sitio-cabecera">
       <NavBar />
     </header>
   )

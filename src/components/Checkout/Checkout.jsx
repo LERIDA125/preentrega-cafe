@@ -1,111 +1,146 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useContext } from 'react'
-import { CartContext } from '../../context/CartContext'
+import { useCarrito } from '../../context/CartContext'
 import { formatPrice } from '../../utils/format'
+import { useTitulo } from '../../hooks/useTitulo'
 
+/**
+ * Checkout.
+ *
+ * No hay pasarela de pago: el alcance es dejar el pedido bien formado y decir con
+ * claridad qué pasa después. El número de pedido se genera al confirmar y el
+ * carrito se vacía recién entonces, así que un error de red no borra la compra.
+ */
 const Checkout = () => {
-  const { carrito, clearCart } = useContext(CartContext)
+  const { items, subtotal, vaciar } = useCarrito()
   const [datos, setDatos] = useState({ nombre: '', email: '' })
   const [orden, setOrden] = useState(null)
+  const [enviando, setEnviando] = useState(false)
 
-  const total = carrito.reduce(
-    (acumulador, item) => acumulador + item.precio * item.cantidad,
-    0
-  )
+  useTitulo(orden ? `Pedido ${orden.numero}` : 'Checkout')
 
-  const handleChange = (e) => {
-    setDatos({ ...datos, [e.target.name]: e.target.value })
+  const cambiar = (evento) => {
+    const { name, value } = evento.target
+    setDatos((previas) => ({ ...previas, [name]: value }))
   }
 
-  const confirmar = (e) => {
-    e.preventDefault()
-    setOrden({
-      numero: `CDO-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
-      nombre: datos.nombre,
-      total,
-    })
-    clearCart()
+  const confirmar = (evento) => {
+    evento.preventDefault()
+    setEnviando(true)
+    const numero = `CDO-${Math.random().toString(36).slice(2, 8).toUpperCase()}`
+    setOrden({ numero, nombre: datos.nombre.trim(), email: datos.email.trim(), total: subtotal })
+    vaciar()
+    setEnviando(false)
   }
 
   if (orden) {
     return (
-      <div className="carrito-vacio checkout-confirmacion">
-        <span className="nota" aria-hidden="true">Pedido confirmado</span>
-        <h2>¡Gracias{orden.nombre ? `, ${orden.nombre}` : ''}!</h2>
-        <p>
-          Tu pedido {orden.numero} por {formatPrice(orden.total)} está en manos
-          del tostador. Te confirmamos el envío por mail.
-        </p>
-        <Link to="/" className="btn-ghost">← Volver al catálogo</Link>
+      <div className="hoja">
+        <div className="columna">
+          <div className="confirmacion">
+            <p className="confirmacion-sello">{orden.numero}</p>
+            <h1 className="confirmacion-titulo">Pedido confirmado</h1>
+            <p className="confirmacion-texto">
+              Gracias{orden.nombre ? `, ${orden.nombre}` : ''}. Tu pedido por{' '}
+              {formatPrice(orden.total)} ya está en el tostador. Te escribimos a{' '}
+              {orden.email || 'tu correo'} con la fecha de envío.
+            </p>
+            <Link to="/" className="boton boton-primario">
+              Volver al catálogo
+            </Link>
+          </div>
+        </div>
       </div>
     )
   }
 
-  if (carrito.length === 0) {
+  if (items.length === 0) {
     return (
-      <div className="carrito-vacio">
-        <span className="nota" aria-hidden="true">Todavía no hay nada acá</span>
-        <h2>El carrito está vacío</h2>
-        <p>Agregá productos desde el catálogo antes de continuar.</p>
-        <Link to="/" className="btn-ghost">← Ir al catálogo</Link>
+      <div className="hoja">
+        <div className="columna">
+          <div className="vacio">
+            <h1 className="vacio-titulo">No hay nada que confirmar</h1>
+            <p className="vacio-texto">Tu carrito está vacío. Agregá algo antes de seguir.</p>
+            <Link to="/#catalogo" className="boton boton-primario">
+              Ver el catálogo
+            </Link>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <section className="checkout">
-      <h2 className="checkout-titulo">Checkout</h2>
-
-      <div className="checkout-grid">
-        <div>
-          <h3 className="checkout-seccion">Resumen del pedido</h3>
-          <ul className="checkout-items">
-            {carrito.map((item) => (
-              <li className="checkout-item" key={item.id}>
-                <span className="checkout-item-nombre">
-                  {item.nombre} <small>× {item.cantidad}</small>
-                </span>
-                <span className="checkout-item-precio">
-                  {formatPrice(item.precio * item.cantidad)}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <div className="checkout-total">
-            <span>Total</span>
-            <span>{formatPrice(total)}</span>
-          </div>
+    <div className="hoja">
+      <div className="columna">
+        <div className="seccion-cabecera">
+          <h1 className="seccion-titulo">Checkout</h1>
+          <p className="seccion-conteo">
+            {items.length} {items.length === 1 ? 'producto' : 'productos'}
+          </p>
         </div>
 
-        <form className="checkout-form" onSubmit={confirmar}>
-          <h3 className="checkout-seccion">Datos del pedido</h3>
-          <label className="checkout-label">
-            Nombre
-            <input
-              type="text"
-              name="nombre"
-              value={datos.nombre}
-              onChange={handleChange}
-              placeholder="Tu nombre"
-              required
-            />
-          </label>
-          <label className="checkout-label">
-            Email
-            <input
-              type="email"
-              name="email"
-              value={datos.email}
-              onChange={handleChange}
-              placeholder="tucorreo@ejemplo.com"
-              required
-            />
-          </label>
-          <button type="submit" className="btn-primary">Confirmar pedido</button>
-        </form>
+        <div className="checkout">
+          <section className="checkout-resumen" aria-labelledby="checkout-resumen-titulo">
+            <h2 id="checkout-resumen-titulo" className="checkout-subtitulo">
+              Resumen
+            </h2>
+            <ul className="checkout-lista">
+              {items.map((item) => (
+                <li key={item.id} className="checkout-fila">
+                  <span className="checkout-nombre">
+                    {item.nombre}
+                    <small>{`${item.cantidad} × ${formatPrice(item.precio)}`}</small>
+                  </span>
+                  <span className="checkout-precio">{formatPrice(item.subtotal)}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="checkout-total">
+              <span>Total</span>
+              <span className="cierre-cifra">{formatPrice(subtotal)}</span>
+            </div>
+          </section>
+
+          <form className="checkout-formulario" onSubmit={confirmar}>
+            <h2 className="checkout-subtitulo">Tus datos</h2>
+
+            <label className="campo">
+              <span className="campo-etiqueta">Nombre</span>
+              <input
+                type="text"
+                name="nombre"
+                value={datos.nombre}
+                onChange={cambiar}
+                autoComplete="name"
+                required
+              />
+            </label>
+
+            <label className="campo">
+              <span className="campo-etiqueta">Correo</span>
+              <input
+                type="email"
+                name="email"
+                value={datos.email}
+                onChange={cambiar}
+                autoComplete="email"
+                required
+              />
+              <span className="campo-ayuda">Ahí te mandamos la confirmación y el seguimiento.</span>
+            </label>
+
+            <button type="submit" className="boton boton-primario" disabled={enviando}>
+              Confirmar pedido
+            </button>
+
+            <Link to="/carrito" className="volver">
+              Volver al carrito
+            </Link>
+          </form>
+        </div>
       </div>
-    </section>
+    </div>
   )
 }
 
