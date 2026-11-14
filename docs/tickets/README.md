@@ -4,6 +4,7 @@
 
 - **Documento base:** [`../ENTREGA.md`](../ENTREGA.md) — evaluación, alcance, historias de usuario y casos de uso.
 - **Convenciones:** `P0` bloqueante · `P1` necesario para la entrega completa · `P2` extra opcional.
+- **Estados:** ✅ hecho · 🟡 escrito, falta ejecutar con credenciales · ⬜ pendiente.
 - **DoD común:** `npm run build` pasa, funciona en el deploy, sin errores en consola, responsive y navegable con teclado.
 
 ## Estado
@@ -14,7 +15,7 @@
 | [T-02](T-02-servicio-productos.md) | Servicio de productos | 1 | P0 | 3 h | T-01 | ✅ Hecho |
 | [T-03](T-03-servicio-imagenes.md) | Servicio de imágenes | 1 | P0 | 2 h | T-01 | ✅ Hecho |
 | [T-04](T-04-migrar-datoscontext.md) | Migrar `DatosContext` a Firestore | 1 | P0 | 3 h | T-02, T-05 | ⬜ Pendiente |
-| [T-05](T-05-cargar-productos.md) | Cargar los productos existentes | 1 | P0 | 1 h | T-01 | ⬜ Pendiente |
+| [T-05](T-05-cargar-productos.md) | Cargar los productos existentes | 1 | P0 | 1 h | T-01 | 🟡 Escrito |
 | [T-06](T-06-product-form.md) | Componente `ProductForm` | 2 | P0 | 4 h | T-02, T-03 | ⬜ Pendiente |
 | [T-07](T-07-ruta-admin-alta.md) | Ruta `/admin` y alta de producto | 2 | P0 | 3 h | T-06, T-09 | ⬜ Pendiente |
 | [T-08](T-08-feedback-alta.md) | Estados de carga, error y éxito | 2 | P0 | 1 h | T-07 | ⬜ Pendiente |

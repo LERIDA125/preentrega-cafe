@@ -299,7 +299,7 @@ Convenciones:
 
 #### T-05 · Cargar los productos existentes en Firestore
 
-- **Prioridad:** P0 · **Estimación:** 1 h · **Depende de:** T-01
+- **Prioridad:** P0 · **Estimación:** 1 h · **Depende de:** T-01 · **Estado:** 🟡 Escrito, falta ejecutar
 - **Qué:** migrar los seis productos de `public/productos.json` a la colección `productos`, conservando todos los campos.
 - **Criterios de aceptación:**
   - [ ] La colección tiene los seis documentos.

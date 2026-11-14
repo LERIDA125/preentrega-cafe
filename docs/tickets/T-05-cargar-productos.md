@@ -6,7 +6,7 @@
 | Prioridad | P0 |
 | Estimación | 1 h |
 | Dependencias | T-01 |
-| Estado | ⬜ Pendiente |
+| Estado | 🟡 Escrito — falta ejecutar con credenciales |
 
 ## Objetivo
 
@@ -41,10 +41,10 @@ Detalles:
 ## Criterios de aceptación
 
 - [ ] La colección `productos` tiene los seis documentos.
-- [ ] Cada documento conserva todos los campos del JSON (incluidos `notas`, `metodo` y `rinde`).
-- [ ] Correr el script dos veces no duplica documentos.
+- [x] Cada documento conserva todos los campos del JSON (incluidos `notas`, `metodo` y `rinde`).
+- [x] Correr el script dos veces no duplica documentos (usa `setDoc` con id fijo).
 - [ ] El catálogo público muestra los seis productos desde Firestore.
-- [ ] Se decide y documenta si `public/productos.json` queda como respaldo o se elimina.
+- [x] Se decide y documenta si `public/productos.json` queda como respaldo o se elimina.
 
 ## Verificación manual
 
@@ -56,5 +56,5 @@ Detalles:
 ## Notas
 
 - El script es una herramienta de una sola vez, no parte del bundle. No importarlo desde `src/`.
+- **Decisión:** `public/productos.json` se conserva como fuente del seed y respaldo de desarrollo. No se elimina.
 - `node --env-file` requiere Node 20.6 o superior. El entorno tiene Node 24.
-- Si después de T-04 se elimina `public/productos.json`, el script deja de funcionar: conviene copiar el JSON a `scripts/productos.seed.json` antes de borrarlo, o simplemente no borrarlo.
