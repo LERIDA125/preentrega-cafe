@@ -1,131 +1,152 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useDatos } from '../../context/DatosContext'
+import Portada from '../Portada/Portada'
 import ItemList from '../ItemList/ItemList'
+import { useTitulo } from '../../hooks/useTitulo'
 
-const obtenerCategorias = (productos) => {
-  const set = new Set(productos.map((p) => p.categoria))
-  return Array.from(set)
-}
-
+/**
+ * Portada + catalogo.
+ *
+ * El filtro vive en la URL, no en el estado: se puede compartir, sobrevive a un
+ * refresh y el boton de atras funciona. El riel izquierdo es un indice con la
+ * cantidad de cada categoria, para saber cuantos productos vas a ver antes de
+ * tocar nada.
+ */
 const ItemListContainer = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [productos, setProductos] = useState([])
-  const [cargando, setCargando] = useState(true)
-  const categoriaActiva = searchParams.get('categoria') || ''
+  const { productos, categorias, cargando, error, reintentar } = useDatos()
 
-  useEffect(() => {
-    fetch('/productos.json')
-      .then((respuesta) => respuesta.json())
-      .then((datos) => {
-        setProductos(datos)
-        setCargando(false)
-      })
-      .catch((error) => {
-        console.error('Error al cargar los productos:', error)
-        setCargando(false)
-      })
-  }, [])
+  const categoriaActiva = searchParams.get('categoria') ?? ''
+  useTitulo(categoriaActiva || null)
 
-  const categorias = useMemo(
-    () => ['', ...obtenerCategorias(productos)],
-    [productos]
+  const productosFiltrados = useMemo(
+    () => (categoriaActiva ? productos.filter((p) => p.categoria === categoriaActiva) : productos),
+    [productos, categoriaActiva]
   )
 
-  const productosFiltrados = categoriaActiva
-    ? productos.filter((p) => p.categoria === categoriaActiva)
-    : productos
-
   const cambiarCategoria = (categoria) => {
-    if (categoria) {
-      setSearchParams({ categoria })
-    } else {
-      setSearchParams({})
-    }
+    setSearchParams(categoria ? { categoria } : {}, { replace: true })
   }
-
-  const titulo = categoriaActiva || 'Nuestros productos'
 
   return (
     <>
-      <section className="hero">
-        <div className="hero-inner">
-          <div className="hero-copy">
-            <p className="hero-annotation">Café de especialidad en grano</p>
-            <h1 className="hero-title">
-              Del grano verde a tu taza
-            </h1>
-            <p className="hero-subtitle">
-              Granos de especialidad, tostados en lotes chicos al momento de tu
-              pedido. Del tostador directo a tu taza, sin estantes de por medio.
-            </p>
-            <a className="hero-cta" href="#catalogo">Ver catálogo</a>
-            <dl className="hero-lote">
-              <div>
-                <dt>Origen</dt>
-                <dd>Colombia, Huila</dd>
-              </div>
-              <div>
-                <dt>Tueste</dt>
-                <dd>Medio</dd>
-              </div>
-              <div>
-                <dt>Notas</dt>
-                <dd>Caramelo y cacao</dd>
-              </div>
-            </dl>
-          </div>
-          <figure className="hero-foto">
-            <img src="/img/hero.jpg" alt="Café de especialidad recién servido" />
-            <span className="hero-stamp" aria-hidden="true">Lote 063</span>
-            <figcaption>Tueste de la semana, servido recién hecho</figcaption>
-          </figure>
+      <div className="hoja">
+        <aside className="riel riel-portada" aria-label="Registro del lote">
+          <dl className="ficha">
+            <div className="ficha-par">
+              <dt>Lote</dt>
+              <dd>063</dd>
+            </div>
+            <div className="ficha-par">
+              <dt>Origen</dt>
+              <dd>Huila, Colombia</dd>
+            </div>
+            <div className="ficha-par">
+              <dt>Altitud</dt>
+              <dd>1.750 msnm</dd>
+            </div>
+            <div className="ficha-par">
+              <dt>Variedad</dt>
+              <dd>Caturra, Castillo</dd>
+            </div>
+            <div className="ficha-par">
+              <dt>Proceso</dt>
+              <dd>Lavado</dd>
+            </div>
+            <div className="ficha-par">
+              <dt>Peso</dt>
+              <dd>1 kg</dd>
+            </div>
+          </dl>
+        </aside>
+
+        <div className="columna">
+          <Portada />
         </div>
-      </section>
+      </div>
 
-      <section className="catalog-section" id="catalogo">
-        <div className="catalog-heading">
-          <h2>{titulo}</h2>
-        </div>
+      <div className="hoja" id="catalogo">
+        <aside className="riel riel-catalogo">
+          <h2 className="riel-titulo">Filtrar</h2>
+          <div className="indice" role="group" aria-label="Filtrar por categoría">
+            <button
+              type="button"
+              className={`indice-fila${categoriaActiva === '' ? ' indice-fila-activa' : ''}`}
+              aria-pressed={categoriaActiva === ''}
+              onClick={() => cambiarCategoria('')}
+            >
+              <span>Todos</span>
+              <span className="indice-cuenta">{productos.length}</span>
+            </button>
 
-        {!cargando && (
-          <div className="catalog-chips" role="group" aria-label="Filtrar por categoría">
-            {categorias.map((categoria) => {
-              const etiqueta = categoria || 'Todos'
-              return (
-                <button
-                  key={etiqueta}
-                  className={`chip${categoriaActiva === categoria ? ' active' : ''}`}
-                  onClick={() => cambiarCategoria(categoria)}
-                >
-                  {etiqueta}
-                </button>
-              )
-            })}
-          </div>
-        )}
-
-        {cargando ? (
-          <div className="productos-grid">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div className="skeleton-card" key={index}>
-                <div className="skeleton-media" />
-                <div className="skeleton-body">
-                  <div className="skeleton-line" />
-                  <div className="skeleton-line" style={{ width: '90%' }} />
-                  <div className="skeleton-line" style={{ width: '30%' }} />
-                </div>
-              </div>
+            {categorias.map((categoria) => (
+              <button
+                key={categoria.nombre}
+                type="button"
+                className={`indice-fila${categoriaActiva === categoria.nombre ? ' indice-fila-activa' : ''}`}
+                aria-pressed={categoriaActiva === categoria.nombre}
+                onClick={() => cambiarCategoria(categoria.nombre)}
+              >
+                <span>{categoria.nombre}</span>
+                <span className="indice-cuenta">{categoria.cantidad}</span>
+              </button>
             ))}
           </div>
-        ) : productosFiltrados.length === 0 ? (
-          <div className="estado">
-            <h2>No hay productos</h2>
-            <p>No encontramos productos en esta categoría.</p>
+        </aside>
+
+        <div className="columna">
+          <div className="seccion-cabecera">
+            <h2 className="seccion-titulo">{categoriaActiva || 'Catálogo'}</h2>
+            {!cargando && !error && (
+              <p className="seccion-conteo">
+                {productosFiltrados.length}{' '}
+                {productosFiltrados.length === 1 ? 'producto' : 'productos'}
+              </p>
+            )}
           </div>
-        ) : (
-          <ItemList productos={productosFiltrados} />
-        )}
-      </section>
+
+          {cargando && (
+            <ul className="esqueleto" aria-hidden="true">
+              {Array.from({ length: 4 }, (_, i) => (
+                <li key={i} className="esqueleto-celda">
+                  <span className="esqueleto-media" />
+                  <span className="esqueleto-linea" />
+                  <span className="esqueleto-linea esqueleto-linea-corta" />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {!cargando && error && (
+            <div className="vacio" role="alert">
+              <h3 className="vacio-titulo">No pudimos cargar el catálogo</h3>
+              <p className="vacio-texto">{error}</p>
+              <button type="button" className="boton boton-primario" onClick={reintentar}>
+                Reintentar
+              </button>
+            </div>
+          )}
+
+          {!cargando && !error && productosFiltrados.length === 0 && (
+            <div className="vacio">
+              <h3 className="vacio-titulo">No hay productos en {categoriaActiva}</h3>
+              <p className="vacio-texto">Probá con otra categoría o mirá todo el catálogo.</p>
+              <button
+                type="button"
+                className="boton boton-primario"
+                onClick={() => cambiarCategoria('')}
+              >
+                Ver todo el catálogo
+              </button>
+            </div>
+          )}
+
+          {!cargando && !error && productosFiltrados.length > 0 && (
+            <ItemList productos={productosFiltrados} />
+          )}
+        </div>
+      </div>
     </>
   )
 }

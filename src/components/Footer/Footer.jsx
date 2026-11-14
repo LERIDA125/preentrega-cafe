@@ -1,35 +1,52 @@
+import { Link } from 'react-router-dom'
+
+const EQUIPO = [
+  { nombre: 'Valentina Ríos', rol: 'Fundadora y maestra tostadora' },
+  { nombre: 'Matías Fernández', rol: 'Barista y control de calidad' },
+  { nombre: 'Sofía Herrera', rol: 'Logística y abastecimiento' },
+]
+
+const iniciales = (nombre) =>
+  nombre
+    .split(' ')
+    .map((palabra) => palabra[0])
+    .join('')
+
 const Footer = () => {
-  const equipo = [
-    { nombre: 'Valentina Ríos', rol: 'Fundadora y Maestra Tostadora' },
-    { nombre: 'Matías Fernández', rol: 'Barista y Control de Calidad' },
-    { nombre: 'Sofía Herrera', rol: 'Logística y Abastecimiento' },
-  ]
-
-  const iniciales = (nombre) =>
-    nombre
-      .split(' ')
-      .map((palabra) => palabra[0])
-      .join('')
-
   return (
-    <footer className="site-footer">
-      <div className="footer-brand">
-        <h3>
-          Café de <span>Origen</span>
-        </h3>
-        <p>Granos seleccionados, tostados artesanalmente y enviados a toda la región.</p>
-        <p>contacto@cafedeorigen.com</p>
-      </div>
-      <div className="footer-team">
-        {equipo.map((persona, index) => (
-          <article className="team-card" key={index}>
-            <span className="avatar" aria-hidden="true">
-              {iniciales(persona.nombre)}
-            </span>
-            <h4>{persona.nombre}</h4>
-            <p>{persona.rol}</p>
-          </article>
-        ))}
+    <footer className="pie">
+      <div className="hoja pie-hoja">
+        <div className="columna">
+          <div className="pie-cuerpo">
+            <div className="pie-marca">
+              <p className="pie-nombre">Café de Origen</p>
+              <p className="pie-texto">
+                Compramos por origen y tostamos en lotes de un kilo. Cualquier consulta escribinos a
+                contacto@cafedeorigen.com
+              </p>
+            </div>
+
+            <nav className="pie-links" aria-label="Del sitio">
+              <Link to="/">Catálogo</Link>
+              <Link to="/receta">Calculadora de receta</Link>
+              <Link to="/carrito">Carrito</Link>
+            </nav>
+
+            <ul className="pie-equipo">
+              {EQUIPO.map((persona) => (
+                <li key={persona.nombre} className="pie-persona">
+                  <span className="pie-iniciales" aria-hidden="true">
+                    {iniciales(persona.nombre)}
+                  </span>
+                  <span>
+                    <span className="pie-persona-nombre">{persona.nombre}</span>
+                    <span className="pie-persona-rol">{persona.rol}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </footer>
   )

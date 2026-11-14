@@ -1,0 +1,53 @@
+rules_version = '2';
+
+/**
+ * Reglas de Firestore.
+ *
+ * La UI protege pantallas; esto protege datos. Cualquiera puede leer el
+ * catálogo y crear una orden, pero escribir productos y leer órdenes exige
+ * sesión iniciada.
+ *
+ * Para publicarlas: consola de Firebase > Firestore > Reglas, o
+ * `firebase deploy --only firestore:rules` con `firebase.json` (ya incluido).
+ */
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Catálogo: lectura pública, escritura solo con sesión.
+    match /productos/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Órdenes: cualquiera puede comprar, solo el panel las lee.
+    // La creación se valida para que nadie escriba basura arbitraria.
+    match /orders/{id} {
+      allow create: if ordenValida();
+      allow read, update, delete: if request.auth != null;
+    }
+
+    /**
+     * Forma mínima de una orden. No valida importes (no hay pasarela de pago),
+     * pero sí que el documento tenga el esquema esperado, que nazca en estado
+     * `pendiente` y que la fecha la ponga el servidor.
+     */
+    function ordenValida() {
+      let orden = request.resource.data;
+
+      return orden.keys().hasOnly(['numero', 'buyer', 'items', 'total', 'estado', 'fecha'])
+        && orden.numero is string
+        && orden.numero.size() > 0
+        && orden.numero.size() <= 32
+        && orden.estado == 'pendiente'
+        && orden.fecha == request.time
+        && orden.total is number
+        && orden.total >= 0
+        && orden.buyer.keys().hasOnly(['nombre', 'email'])
+        && orden.buyer.nombre is string
+        && orden.buyer.email is string
+        && orden.items is list
+        && orden.items.size() > 0
+        && orden.items.size() <= 50;
+    }
+  }
+}
