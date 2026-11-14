@@ -24,7 +24,23 @@ import { mensajeDeError } from '../utils/firebaseErrors'
 
 const COLECCION = 'productos'
 
-const aProducto = (documento) => ({ ...documento.data(), id: documento.id })
+const normalizarNotas = (notas) => {
+  if (Array.isArray(notas)) return notas.filter((nota) => typeof nota === 'string')
+  if (typeof notas === 'string') {
+    return notas.split(',').map((nota) => nota.trim()).filter(Boolean)
+  }
+  return []
+}
+
+const aProducto = (documento) => {
+  const datos = documento.data()
+  return {
+    ...datos,
+    punto: typeof datos.punto === 'string' ? datos.punto : '',
+    notas: normalizarNotas(datos.notas),
+    id: documento.id,
+  }
+}
 
 /** Envuelve una operación para no filtrar errores crudos de Firebase a la UI. */
 const conError = async (accion, mensaje) => {

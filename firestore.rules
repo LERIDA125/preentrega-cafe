@@ -42,9 +42,12 @@ service cloud.firestore {
         && orden.fecha == request.time
         && orden.total is number
         && orden.total >= 0
-        && orden.buyer.keys().hasOnly(['nombre', 'email'])
+        && orden.buyer.keys().hasOnly(['nombre', 'email', 'telefono'])
         && orden.buyer.nombre is string
         && orden.buyer.email is string
+        && orden.buyer.telefono is string
+        && orden.buyer.telefono.size() > 0
+        && orden.buyer.telefono.size() <= 30
         && orden.items is list
         && orden.items.size() > 0
         && orden.items.size() <= 50;

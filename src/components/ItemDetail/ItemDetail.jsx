@@ -156,14 +156,11 @@ const ItemDetail = ({ producto }) => {
                     : `Quedan ${lugar} ${lugar === 1 ? 'unidad' : 'unidades'} disponibles`}
                 </p>
 
-                <p
-                  className={`aviso aviso-${aviso.tono}`}
-                  role="status"
-                  aria-live="polite"
-                  hidden={!aviso}
-                >
-                  {aviso?.texto}
-                </p>
+                {aviso && (
+                  <p className={`aviso aviso-${aviso.tono}`} role="status" aria-live="polite">
+                    {aviso.texto}
+                  </p>
+                )}
 
                 {quedaUno && <p className="compra-ultimo">Queda una sola unidad.</p>}
               </div>

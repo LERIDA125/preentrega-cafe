@@ -14,11 +14,11 @@ import { useAuth } from '../../context/AuthContext'
  * Esto protege la interfaz, no los datos: la protección real son las reglas de
  * Firestore (T-19).
  */
-const ProtectedRoute = () => {
-  const { user, cargando } = useAuth()
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth()
   const location = useLocation()
 
-  if (cargando) {
+  if (loading) {
     return (
       <div className="hoja">
         <div className="columna">
@@ -34,7 +34,7 @@ const ProtectedRoute = () => {
     return <Navigate to="/login" replace state={{ from: location }} />
   }
 
-  return <Outlet />
+  return children ?? <Outlet />
 }
 
 export default ProtectedRoute
