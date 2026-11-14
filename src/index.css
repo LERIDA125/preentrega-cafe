@@ -16,13 +16,13 @@
 
 :root {
   /* Color */
-  --hoja: #e9e7df;
-  --hoja-alta: #f1efe9;
-  --tinta: #2b1d12;
+  --hoja: #f8f5f0;
+  --hoja-alta: #fffdf9;
+  --tinta: #3e2723;
   --tinta-suave: #6e6055;
-  --prusia: #1b3d8f;
-  --prusia-fuerte: #14306f;
-  --prusia-tenue: #e4e8f3;
+  --prusia: #5d4037;
+  --prusia-fuerte: #3e2723;
+  --prusia-tenue: #eee5df;
   --ascua: #a93215;
   --ascua-tenue: #f4e3de;
   --linea: #d2cec2;
@@ -153,10 +153,13 @@ a {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
 }
 
 .app main {
   flex: 1;
+  min-width: 0;
+  width: 100%;
 }
 
 .app main:focus {
@@ -193,6 +196,11 @@ a {
 
   .columna {
     padding-left: var(--e-6);
+  }
+
+  .hoja > .columna:only-child {
+    grid-column: 1 / -1;
+    padding-left: 0;
   }
 }
 
@@ -1269,6 +1277,13 @@ a {
   padding-block: var(--e-5) var(--e-6);
 }
 
+.app main > .receta {
+  width: 100%;
+  max-width: var(--ancho);
+  margin-inline: auto;
+  padding-inline: var(--canal);
+}
+
 .receta-cabecera {
   max-width: 46rem;
   margin-bottom: var(--e-5);
@@ -1290,6 +1305,7 @@ a {
 
 .receta-cuerpo {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--e-5);
 }
 
@@ -1299,6 +1315,12 @@ a {
     gap: var(--e-7);
     align-items: start;
   }
+}
+
+.receta-cuerpo > *,
+.receta-controles,
+.receta-ficha {
+  min-width: 0;
 }
 
 .receta-controles {
@@ -2120,12 +2142,13 @@ a {
 
 .pie-cuerpo {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--e-5);
 }
 
 @media (min-width: 52rem) {
   .pie-cuerpo {
-    grid-template-columns: minmax(0, 1.2fr) auto minmax(0, 1.3fr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(8rem, 0.7fr) minmax(0, 1.3fr);
     gap: var(--e-7);
     align-items: start;
   }
