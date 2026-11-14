@@ -12,6 +12,7 @@ import {
   updateDoc,
 } from 'firebase/firestore'
 import { db } from '../config/firebase'
+import { mensajeDeError } from '../utils/firebaseErrors'
 
 /**
  * Acceso a la colección `productos`.
@@ -30,7 +31,7 @@ const conError = async (accion, mensaje) => {
   try {
     return await accion()
   } catch (error) {
-    throw new Error(mensaje, { cause: error })
+    throw new Error(mensajeDeError(error, mensaje), { cause: error })
   }
 }
 
@@ -74,7 +75,7 @@ export const createProduct = (datos) =>
       creadoEn: serverTimestamp(),
     })
     return referencia.id
-  }, 'No pudimos crear el producto.')
+  }, 'No pudimos guardar el producto. Revisá la conexión y volvé a intentar.')
 
 /** No permite pisar el id ni la fecha de creación. */
 export const updateProduct = (id, datos) =>

@@ -26,11 +26,27 @@ const Checkout = lazy(() =>
 const NoEncontrado = lazy(() =>
   import('./components/NoEncontrado/NoEncontrado').then((m) => ({ default: m.default }))
 )
+const AuthBoundary = lazy(() =>
+  import('./components/auth/AuthBoundary').then((m) => ({ default: m.default }))
+)
+const Login = lazy(() => import('./pages/Login').then((m) => ({ default: m.default })))
+const ProtectedRoute = lazy(() =>
+  import('./components/auth/ProtectedRoute').then((m) => ({ default: m.default }))
+)
 const AdminLayout = lazy(() =>
   import('./components/layouts/AdminLayout').then((m) => ({ default: m.default }))
 )
-const AdminPanel = lazy(() =>
-  import('./pages/admin/AdminPanel').then((m) => ({ default: m.default }))
+const AdminProducts = lazy(() =>
+  import('./pages/admin/AdminProducts').then((m) => ({ default: m.default }))
+)
+const AdminNuevoProducto = lazy(() =>
+  import('./pages/admin/AdminNuevoProducto').then((m) => ({ default: m.default }))
+)
+const AdminEditarProducto = lazy(() =>
+  import('./pages/admin/AdminEditarProducto').then((m) => ({ default: m.default }))
+)
+const AdminOrdenes = lazy(() =>
+  import('./pages/admin/AdminOrdenes').then((m) => ({ default: m.default }))
 )
 
 const esperando = (
@@ -60,8 +76,16 @@ function App() {
                   <Route path="*" element={<NoEncontrado />} />
                 </Route>
 
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<AdminPanel />} />
+                <Route element={<AuthBoundary />}>
+                  <Route path="/login" element={<Login />} />
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/admin" element={<AdminLayout />}>
+                      <Route index element={<AdminProducts />} />
+                      <Route path="nuevo" element={<AdminNuevoProducto />} />
+                      <Route path="editar/:id" element={<AdminEditarProducto />} />
+                      <Route path="ordenes" element={<AdminOrdenes />} />
+                    </Route>
+                  </Route>
                 </Route>
               </Routes>
             </Suspense>

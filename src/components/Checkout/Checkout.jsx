@@ -1,36 +1,58 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCarrito } from '../../context/CartContext'
+import { createOrder, generarNumeroOrden } from '../../services/orderService'
 import { formatPrice } from '../../utils/format'
 import { useTitulo } from '../../hooks/useTitulo'
 
 /**
  * Checkout.
  *
- * No hay pasarela de pago: el alcance es dejar el pedido bien formado y decir con
- * claridad qué pasa después. El número de pedido se genera al confirmar y el
- * carrito se vacía recién entonces, así que un error de red no borra la compra.
+ * No hay pasarela de pago: el alcance es dejar el pedido guardado en Firestore
+ * y decir con claridad qué pasa después. El carrito se vacía **sólo** cuando la
+ * escritura resolvió: si falla la red, la compra sigue en pantalla y se puede
+ * reintentar.
  */
 const Checkout = () => {
   const { items, subtotal, vaciar } = useCarrito()
   const [datos, setDatos] = useState({ nombre: '', email: '' })
   const [orden, setOrden] = useState(null)
   const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState(null)
+  const enviandoRef = useRef(false)
 
   useTitulo(orden ? `Pedido ${orden.numero}` : 'Checkout')
 
   const cambiar = (evento) => {
     const { name, value } = evento.target
     setDatos((previas) => ({ ...previas, [name]: value }))
+    setError(null)
   }
 
-  const confirmar = (evento) => {
+  const confirmar = async (evento) => {
     evento.preventDefault()
+
+    // Doble protección: el estado deshabilita el botón, el ref corta dos
+    // submits en el mismo tick, antes de que React vuelva a renderizar.
+    if (enviandoRef.current) return
+    enviandoRef.current = true
     setEnviando(true)
-    const numero = `CDO-${Math.random().toString(36).slice(2, 8).toUpperCase()}`
-    setOrden({ numero, nombre: datos.nombre.trim(), email: datos.email.trim(), total: subtotal })
-    vaciar()
-    setEnviando(false)
+    setError(null)
+
+    const numero = generarNumeroOrden()
+    const comprador = { nombre: datos.nombre.trim(), email: datos.email.trim() }
+    const total = subtotal
+
+    try {
+      await createOrder({ numero, buyer: comprador, items, total })
+      vaciar()
+      setOrden({ numero, ...comprador, total })
+    } catch (fallo) {
+      setError(fallo.message || 'No pudimos registrar el pedido. Probá de nuevo.')
+    } finally {
+      enviandoRef.current = false
+      setEnviando(false)
+    }
   }
 
   if (orden) {
@@ -113,6 +135,7 @@ const Checkout = () => {
                 value={datos.nombre}
                 onChange={cambiar}
                 autoComplete="name"
+                disabled={enviando}
                 required
               />
             </label>
@@ -125,13 +148,20 @@ const Checkout = () => {
                 value={datos.email}
                 onChange={cambiar}
                 autoComplete="email"
+                disabled={enviando}
                 required
               />
               <span className="campo-ayuda">Ahí te mandamos la confirmación y el seguimiento.</span>
             </label>
 
+            {error && (
+              <p className="aviso aviso-aviso" role="alert">
+                {error}
+              </p>
+            )}
+
             <button type="submit" className="boton boton-primario" disabled={enviando}>
-              Confirmar pedido
+              {enviando ? 'Confirmando…' : 'Confirmar pedido'}
             </button>
 
             <Link to="/carrito" className="volver">

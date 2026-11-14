@@ -12,6 +12,7 @@
 
 import { readFile } from 'node:fs/promises'
 import { initializeApp } from 'firebase/app'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import {
   collection,
   doc,
@@ -63,12 +64,36 @@ const leerProductos = async () => {
   return productos
 }
 
+/**
+ * Firestore exige sesión para escribir en `productos` (ver `firestore.rules`).
+ * El seed corre sin sesión salvo que se le pasen credenciales:
+ *
+ *   SEED_EMAIL=admin@admin.com SEED_PASSWORD=admin123 npm run seed
+ *
+ * Si las variables no están, intenta escribir como visitante anónimo: eso sólo
+ * funciona antes de publicar las reglas de T-19.
+ */
+const autenticar = async (app) => {
+  const email = process.env.SEED_EMAIL
+  const password = process.env.SEED_PASSWORD
+
+  if (!email || !password) return false
+
+  await signInWithEmailAndPassword(getAuth(app), email, password)
+  return true
+}
+
 const main = async () => {
   const app = initializeApp(leerConfiguracion())
   const db = getFirestore(app)
   const productos = await leerProductos()
 
-  console.log(`Sembrando ${productos.length} productos en "${COLECCION}"...`)
+  const conSesion = await autenticar(app)
+  console.log(
+    conSesion
+      ? `Sembrando ${productos.length} productos en "${COLECCION}" con sesión iniciada...`
+      : `Sembrando ${productos.length} productos en "${COLECCION}" sin sesión...`
+  )
 
   for (const [indice, producto] of productos.entries()) {
     const { id, ...campos } = producto
@@ -92,5 +117,14 @@ const main = async () => {
 main().catch((error) => {
   console.error(`Falló el seed: ${error.message}`)
   if (error.cause?.message) console.error(error.cause.message)
+
+  if (error.code === 'permission-denied' || error.cause?.code === 'permission-denied') {
+    console.error(
+      'Pista: las reglas de Firestore exigen sesión para escribir en "productos". ' +
+        'Corré el seed con SEED_EMAIL y SEED_PASSWORD de una cuenta administradora, ' +
+        'o hacelo antes de publicar las reglas.'
+    )
+  }
+
   process.exitCode = 1
 })

@@ -17,19 +17,19 @@
 | [T-04](T-04-migrar-datoscontext.md) | Migrar `DatosContext` a Firestore | 1 | P0 | 3 h | T-02, T-05 | ⬜ Pendiente |
 | [T-05](T-05-cargar-productos.md) | Cargar los productos existentes | 1 | P0 | 1 h | T-01 | 🟡 Escrito |
 | [T-06](T-06-product-form.md) | Componente `ProductForm` | 2 | P0 | 4 h | T-02, T-03 | ✅ Hecho |
-| [T-07](T-07-ruta-admin-alta.md) | Ruta `/admin` y alta de producto | 2 | P0 | 3 h | T-06, T-09 | ⬜ Pendiente |
-| [T-08](T-08-feedback-alta.md) | Estados de carga, error y éxito | 2 | P0 | 1 h | T-07 | ⬜ Pendiente |
-| [T-09](T-09-layouts.md) | Separar `PublicLayout` y `AdminLayout` | 3 | P1 | 3 h | — | ⬜ Pendiente |
-| [T-10](T-10-auth-context.md) | `AuthContext` | 3 | P1 | 3 h | T-01 | ⬜ Pendiente |
-| [T-11](T-11-login.md) | Pantalla de login | 3 | P1 | 2 h | T-09, T-10 | ⬜ Pendiente |
-| [T-12](T-12-protected-route.md) | `ProtectedRoute` | 3 | P1 | 2 h | T-10 | ⬜ Pendiente |
-| [T-13](T-13-nav-admin-logout.md) | Navegación de administración y logout | 3 | P1 | 1 h | T-09, T-10 | ⬜ Pendiente |
+| [T-07](T-07-ruta-admin-alta.md) | Ruta `/admin` y alta de producto | 2 | P0 | 3 h | T-06, T-09 | 🟡 Escrito |
+| [T-08](T-08-feedback-alta.md) | Estados de carga, error y éxito | 2 | P0 | 1 h | T-07 | 🟡 Escrito |
+| [T-09](T-09-layouts.md) | Separar `PublicLayout` y `AdminLayout` | 3 | P1 | 3 h | — | ✅ Hecho |
+| [T-10](T-10-auth-context.md) | `AuthContext` | 3 | P1 | 3 h | T-01 | 🟡 Escrito |
+| [T-11](T-11-login.md) | Pantalla de login | 3 | P1 | 2 h | T-09, T-10 | 🟡 Escrito |
+| [T-12](T-12-protected-route.md) | `ProtectedRoute` | 3 | P1 | 2 h | T-10 | 🟡 Escrito |
+| [T-13](T-13-nav-admin-logout.md) | Navegación de administración y logout | 3 | P1 | 1 h | T-09, T-10 | 🟡 Escrito |
 | [T-14](T-14-usuario-admin.md) | Crear el usuario administrador | 3 | P1 | 1 h | T-01 | ⬜ Pendiente |
-| [T-15](T-15-editar-producto.md) | Editar producto | 4 | P2 | 3 h | T-06, T-07 | ⬜ Pendiente |
-| [T-16](T-16-eliminar-producto.md) | Eliminar producto | 4 | P2 | 2 h | T-07 | ⬜ Pendiente |
-| [T-17](T-17-persistir-ordenes.md) | Persistir órdenes de compra | 4 | P2 | 3 h | T-02 | ⬜ Pendiente |
-| [T-18](T-18-lista-ordenes.md) | Lista de órdenes en el panel | 4 | P2 | 3 h | T-09, T-17 | ⬜ Pendiente |
-| [T-19](T-19-reglas-seguridad.md) | Reglas de seguridad de Firestore | 4 | P2 | 1 h | T-01 | ⬜ Pendiente |
+| [T-15](T-15-editar-producto.md) | Editar producto | 4 | P2 | 3 h | T-06, T-07 | 🟡 Escrito |
+| [T-16](T-16-eliminar-producto.md) | Eliminar producto | 4 | P2 | 2 h | T-07 | 🟡 Escrito |
+| [T-17](T-17-persistir-ordenes.md) | Persistir órdenes de compra | 4 | P2 | 3 h | T-02 | 🟡 Escrito |
+| [T-18](T-18-lista-ordenes.md) | Lista de órdenes en el panel | 4 | P2 | 3 h | T-09, T-17 | 🟡 Escrito |
+| [T-19](T-19-reglas-seguridad.md) | Reglas de seguridad de Firestore | 4 | P2 | 1 h | T-01 | 🟡 Escrito |
 
 ## Orden de implementación
 

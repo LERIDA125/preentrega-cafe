@@ -6,7 +6,7 @@
 | Prioridad | P0 |
 | Estimación | 3 h |
 | Dependencias | T-06, T-09 |
-| Estado | ⬜ Pendiente |
+| Estado | 🟡 Escrito — falta ejecutar con credenciales |
 
 ## Objetivo
 
@@ -37,10 +37,10 @@ Que exista una ruta real de administración donde se pueda dar de alta un produc
 
 ## Criterios de aceptación
 
-- [ ] `/admin` existe y renderiza el panel.
-- [ ] `/admin/nuevo` muestra el formulario.
-- [ ] Al guardar: sube imagen → crea producto → vuelve al listado con confirmación.
-- [ ] Si falla la imagen, no se crea el producto a medias.
+- [x] `/admin` existe y renderiza el panel.
+- [x] `/admin/nuevo` muestra el formulario.
+- [x] Al guardar: sube imagen → crea producto → vuelve al listado con confirmación.
+- [x] Si falla la imagen, no se crea el producto a medias.
 - [ ] El deep link `https://<deploy>/admin` devuelve la app, no un 404 de Vercel.
 - [ ] El producto nuevo aparece en el catálogo público sin recargar (gracias a T-04).
 
@@ -56,3 +56,4 @@ Que exista una ruta real de administración donde se pueda dar de alta un produc
 - **Dependencia real:** sin T-09 no hay dónde colgar la ruta sin arrastrar el header público. Si se quiere adelantar, se puede montar `/admin` temporalmente bajo el `Layout` actual y moverlo después.
 - `ancho` y `alto` se usan para evitar saltos de layout. Si no se leen las dimensiones reales de la imagen, usar un valor fijo y anotarlo como deuda.
 - El rewrite es genérico, no específico de `/admin`: no hay que tocarlo por cada ruta nueva.
+- **Implementado:** `AdminProducts` escucha la colección con `subscribeProducts` y `AdminNuevoProducto` sube la imagen antes de crear el documento. Si `createProduct` falla después de subir, se borra la imagen en Storage para no dejar huérfanos. Deuda aceptada: `ancho` y `alto` fijos en 900 px.

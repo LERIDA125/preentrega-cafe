@@ -124,6 +124,7 @@ const ProductForm = ({ initialValues, onSubmit, submitLabel = 'Publicar producto
   const [vista, setVista] = useState(initialValues?.imagen ?? null)
   const [errorGeneral, setErrorGeneral] = useState(null)
   const formulario = useRef(null)
+  const enviandoRef = useRef(false)
 
   useEffect(() => {
     if (!imagen) return undefined
@@ -170,7 +171,7 @@ const ProductForm = ({ initialValues, onSubmit, submitLabel = 'Publicar producto
 
   const enviar = async (evento) => {
     evento.preventDefault()
-    if (isSubmitting) return
+    if (isSubmitting || enviandoRef.current) return
 
     const nuevos = validar(valores)
     const requisitoImagen = !initialValues?.imagen
@@ -192,6 +193,7 @@ const ProductForm = ({ initialValues, onSubmit, submitLabel = 'Publicar producto
 
     setErrores({})
     setErrorGeneral(null)
+    enviandoRef.current = true
 
     try {
       await onSubmit(aDatos(valores), imagen)
@@ -199,6 +201,8 @@ const ProductForm = ({ initialValues, onSubmit, submitLabel = 'Publicar producto
       setErrorGeneral(
         error instanceof Error ? error.message : 'No pudimos guardar el producto.'
       )
+    } finally {
+      enviandoRef.current = false
     }
   }
 

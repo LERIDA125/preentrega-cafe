@@ -1,6 +1,8 @@
 import { Link, NavLink } from 'react-router-dom'
 import CartWidget from './CartWidget'
 
+const claseEnlace = ({ isActive }) => `barra-link${isActive ? ' activo' : ''}`
+
 const NavBar = () => {
   return (
     <nav className="barra" aria-label="Principal">
@@ -11,12 +13,12 @@ const NavBar = () => {
 
         <ul className="barra-links">
           <li>
-            <NavLink to="/" end className="barra-link">
+            <NavLink to="/" end className={claseEnlace}>
               Catálogo
             </NavLink>
           </li>
           <li>
-            <NavLink to="/receta" className="barra-link">
+            <NavLink to="/receta" className={claseEnlace}>
               Receta
             </NavLink>
           </li>

@@ -1,0 +1,30 @@
+rules_version = '2';
+
+/**
+ * Reglas de Firebase Storage.
+ *
+ * Las imágenes de producto las ve todo el mundo (el catálogo es público), pero
+ * subirlas o borrarlas exige sesión. El límite de tamaño y el tipo repiten lo
+ * que ya valida `src/services/imageService.js`: la validación del cliente es
+ * comodidad, la del servidor es la que cuenta.
+ *
+ * `delete` va aparte porque en un borrado `request.resource` es nulo y no tiene
+ * tamaño ni content-type que comprobar.
+ *
+ * Para publicarlas: consola de Firebase > Storage > Reglas, o
+ * `firebase deploy --only storage` con `firebase.json` (ya incluido).
+ */
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    match /productos/{archivo} {
+      allow read: if true;
+
+      allow create, update: if request.auth != null
+        && request.resource.size <= 2 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+
+      allow delete: if request.auth != null;
+    }
+  }
+}

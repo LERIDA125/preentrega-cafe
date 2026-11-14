@@ -1,5 +1,6 @@
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { storage } from '../config/firebase'
+import { mensajeDeError } from '../utils/firebaseErrors'
 
 /**
  * Imágenes de producto en Firebase Storage.
@@ -48,7 +49,13 @@ export const uploadProductImage = async (file) => {
     await uploadBytes(referencia, file, { contentType: file.type })
     return await getDownloadURL(referencia)
   } catch (error) {
-    throw new Error('No pudimos subir la imagen. Probá de nuevo.', { cause: error })
+    throw new Error(
+      mensajeDeError(
+        error,
+        'No pudimos subir la imagen. Probá con otra o con un archivo más chico.'
+      ),
+      { cause: error }
+    )
   }
 }
 

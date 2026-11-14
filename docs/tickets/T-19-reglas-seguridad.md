@@ -6,7 +6,7 @@
 | Prioridad | P2 |
 | Estimación | 1 h |
 | Dependencias | T-01 |
-| Estado | ⬜ Pendiente |
+| Estado | 🟡 Escrito — falta publicar en la consola |
 
 ## Objetivo
 
@@ -14,40 +14,20 @@ Que la protección del panel no dependa solo de la UI. Sin reglas, cualquiera co
 
 > No está en la consigna, pero es lo primero que mira un evaluador técnico: `ProtectedRoute` protege la pantalla, no los datos.
 
-## Plan de implementación
+## Implementación
 
-**Firestore > Reglas:**
+- `firestore.rules` permite lectura pública del catálogo y escritura solo con
+  sesión. En `orders`, permite crear órdenes anónimas solo si tienen la forma
+  esperada, estado `pendiente` y fecha del servidor; leer, actualizar o borrar
+  requiere sesión. No hay lectura pública de datos de compradores.
+- `storage.rules` permite leer imágenes de productos públicamente. Crear o
+  actualizar imágenes requiere sesión, limita el tamaño a 2 MiB y acepta solo
+  JPEG, PNG o WebP; borrar requiere sesión.
+- `firebase.json` apunta a ambos archivos para publicarlos con Firebase CLI.
 
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /productos/{id} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-
-    match /orders/{id} {
-      allow create: if true;
-      allow read, update, delete: if request.auth != null;
-    }
-  }
-}
-```
-
-**Storage > Reglas:**
-
-```
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /productos/{archivo} {
-      allow read: if true;
-      allow write: if request.auth != null;
-    }
-  }
-}
-```
+La creación de órdenes valida la estructura mínima, pero no puede validar que
+los precios sean legítimos: el proyecto no integra una pasarela de pago y los
+datos provienen del cliente.
 
 ## Criterios de aceptación
 
@@ -67,6 +47,12 @@ service firebase.storage {
 
 ## Notas
 
-- Las reglas se publican desde la consola de Firebase o con `firebase deploy --only firestore:rules`.
+- Las reglas están implementadas en el repositorio, pero todavía deben
+  publicarse en el proyecto Firebase. Se pueden publicar desde la consola o
+  con `firebase deploy --only firestore:rules,storage`.
+- Hasta publicarlas, Firestore conserva las reglas activas del proyecto y las
+  operaciones de T-17/T-18 pueden seguir devolviendo `permission-denied`.
+- Después de publicar, completar la verificación manual con el proyecto y las
+  credenciales reales; el build de Vite no valida reglas de Firebase.
 - Si se agrega Analytics o cualquier otro servicio, revisar que sus reglas no abran escritura.
 - No usar `allow write: if true` "para probar y después lo cambio". Ese "después" nunca llega.

@@ -6,7 +6,7 @@
 | Prioridad | P1 |
 | Estimación | 2 h |
 | Dependencias | T-09, T-10 |
-| Estado | ⬜ Pendiente |
+| Estado | 🟡 Escrito — falta ejecutar con credenciales |
 
 ## Objetivo
 
@@ -35,12 +35,12 @@ Que el administrador pueda iniciar sesión con correo y contraseña y llegar al 
 
 ## Criterios de aceptación
 
-- [ ] Login exitoso redirige a `/admin`.
-- [ ] Error genérico para credenciales inválidas (no revela cuál campo falló).
-- [ ] Si ya hay sesión, redirige a `/admin`.
-- [ ] Respeta `location.state.from`.
-- [ ] Botón deshabilitado mientras envía.
-- [ ] Accesible por teclado, con `autoComplete` correcto.
+- [x] Login exitoso redirige a `/admin`.
+- [x] Error genérico para credenciales inválidas (no revela cuál campo falló).
+- [x] Si ya hay sesión, redirige a `/admin`.
+- [x] Respeta `location.state.from`.
+- [x] Botón deshabilitado mientras envía.
+- [x] Accesible por teclado, con `autoComplete` correcto.
 
 ## Verificación manual
 
@@ -53,3 +53,7 @@ Que el administrador pueda iniciar sesión con correo y contraseña y llegar al 
 
 - La pantalla de login puede vivir dentro de `PublicLayout` o en un layout mínimo sin chrome. Lo importante es que no muestre la navegación de administración.
 - No mostrar el usuario/contraseña de ejemplo en la UI del deploy. Va documentado en la entrega, no en pantalla.
+- **Implementado:** `/login` vive dentro de `AuthBoundary` pero fuera de `PublicLayout` y `AdminLayout`: es una caja centrada con la marca y "Volver al sitio", sin chrome de ningún layout.
+- **Desvío:** el mapa de errores de credenciales quedó en `src/utils/firebaseErrors.js` en vez de un mapa local de T-11. Motivo: ya existía para los errores de Firestore/Storage, y T-13 reutiliza el mismo helper. Además incluye `auth/wrong-password` y `auth/user-not-found` con el mismo texto genérico, para no filtrar si el correo existe.
+- Mientras `cargando` está en curso se muestra "Verificando sesión" sin formulario: evita el parpadeo de login en un usuario que ya tiene sesión.
+- `destino` conserva `pathname + search` de `state.from`. La redirección por `user` existente también usa `destino`, así el `from` se respeta sin importar qué camino gane la carrera.

@@ -278,6 +278,29 @@ a {
   background: var(--ascua-tenue);
 }
 
+.aviso-descartable {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+}
+
+.aviso-descartable p {
+  margin: 0;
+}
+
+.aviso-cerrar {
+  font-size: var(--t-dato);
+  color: var(--prusia);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.aviso-cerrar:hover {
+  color: var(--prusia-fuerte);
+}
+
 /* ---------- Botones ---------- */
 
 .boton {
@@ -405,6 +428,64 @@ a {
 .barra-link.activo {
   color: var(--tinta);
   border-bottom-color: var(--tinta);
+}
+
+/* Barra del panel: usuario, salida al sitio y logout. */
+
+.barra-admin {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+}
+
+.barra-usuario {
+  max-width: 12rem;
+  overflow: hidden;
+  font-size: var(--t-dato);
+  color: var(--tinta-suave);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barra-salir {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--ascua);
+  border-radius: var(--radio-control);
+  font-size: var(--t-chico);
+  color: var(--ascua);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.barra-salir:hover:not(:disabled) {
+  background: var(--ascua);
+  color: var(--papel-inverso);
+}
+
+.barra-salir:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.barra-error {
+  margin: 0;
+}
+
+@media (max-width: 48rem) {
+  .app-admin .barra-inner {
+    flex-wrap: wrap;
+    row-gap: var(--e-2);
+  }
+
+  .app-admin .barra-links {
+    order: 3;
+    width: 100%;
+    margin: 0;
+  }
+
+  .marca-panel,
+  .barra-usuario {
+    display: none;
+  }
 }
 
 .carrito-boton {
@@ -1701,6 +1782,269 @@ a {
   gap: 0.3rem;
   flex: 1 1 16rem;
 }
+
+/* ---------- Panel de administración ---------- */
+
+.admin-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--e-4);
+  margin-bottom: var(--e-5);
+}
+
+.admin-cabecera-texto {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.admin-cabecera-ayuda {
+  font-size: var(--t-chico);
+  color: var(--tinta-suave);
+  max-width: 48ch;
+}
+
+.admin-aviso {
+  margin-bottom: var(--e-4);
+}
+
+.admin-lista {
+  display: grid;
+  border-top: 1px solid var(--linea);
+}
+
+.admin-fila {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--e-4);
+  padding: var(--e-3) 0;
+  border-bottom: 1px solid var(--linea);
+}
+
+.admin-miniatura {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--hoja-alta);
+  border: 1px solid var(--linea);
+}
+
+.admin-miniatura img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-miniatura-vacia {
+  font-size: 0.6875rem;
+  color: var(--tinta-suave);
+  text-align: center;
+}
+
+.admin-fila-cuerpo {
+  min-width: 0;
+}
+
+.admin-fila-nombre {
+  font-family: var(--fuente-display);
+  font-size: var(--t-sub);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.admin-fila-meta {
+  font-size: var(--t-dato);
+  color: var(--tinta-suave);
+}
+
+.admin-fila-accion {
+  padding: 0;
+  font-size: var(--t-chico);
+  color: var(--prusia);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.admin-fila-accion:hover {
+  border-bottom-color: currentColor;
+}
+
+.admin-fila-accion:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.admin-fila-accion-peligro {
+  color: var(--ascua);
+  font-weight: 600;
+  border-bottom-color: var(--ascua);
+}
+
+.admin-fila-acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+}
+
+/* ---------- Órdenes ---------- */
+
+.admin-orden {
+  display: grid;
+  gap: var(--e-2);
+  padding: var(--e-4) 0;
+  border-bottom: 1px solid var(--linea);
+}
+
+.admin-orden-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--e-4);
+}
+
+.admin-orden-datos {
+  min-width: 0;
+}
+
+.admin-orden-numero {
+  display: flex;
+  align-items: center;
+  gap: var(--e-2);
+  font-family: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', monospace;
+  font-size: var(--t-sub);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.admin-orden-estado {
+  padding: 0.1rem 0.45rem;
+  font-family: var(--fuente-texto);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--prusia);
+  background: var(--hoja-alta);
+  border: 1px solid var(--linea-fuerte);
+}
+
+.admin-orden-importe {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.admin-orden-total {
+  font-family: var(--fuente-display);
+  font-size: var(--t-sub);
+  font-weight: 600;
+}
+
+.admin-orden-detalle {
+  font-size: var(--t-chico);
+}
+
+.admin-orden-detalle summary {
+  color: var(--prusia);
+  cursor: pointer;
+  width: fit-content;
+  border-bottom: 1px solid transparent;
+}
+
+.admin-orden-detalle summary:hover {
+  border-bottom-color: currentColor;
+}
+
+.admin-orden-items {
+  display: grid;
+  gap: var(--e-1);
+  margin-top: var(--e-2);
+  padding-left: var(--e-4);
+  border-left: 2px solid var(--linea);
+}
+
+.admin-orden-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--e-4);
+}
+
+.admin-orden-item small {
+  display: block;
+  font-size: var(--t-dato);
+  color: var(--tinta-suave);
+}
+
+@media (max-width: 40rem) {
+  .admin-orden-cabecera {
+    flex-direction: column;
+    gap: var(--e-1);
+  }
+
+  .admin-orden-importe {
+    text-align: left;
+  }
+}
+
+/* ---------- Acceso ---------- */
+
+.acceso {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: var(--e-6) var(--canal);
+  background: var(--hoja-alta);
+}
+
+.acceso-caja {
+  display: grid;
+  gap: var(--e-4);
+  width: 100%;
+  max-width: 24rem;
+  padding: var(--e-6);
+  background: var(--hoja);
+  border: 1px solid var(--linea);
+}
+
+.acceso-titulo {
+  font-family: var(--fuente-display);
+  font-size: var(--t-h2);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.acceso-intro {
+  margin-top: 0.2rem;
+  font-size: var(--t-chico);
+  color: var(--tinta-suave);
+}
+
+.acceso-form {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.acceso-form .boton {
+  width: 100%;
+}
+
+.acceso-volver {
+  justify-self: start;
+  font-size: var(--t-dato);
+  color: var(--tinta-suave);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease;
+}
+
+.acceso-volver:hover {
+  border-bottom-color: currentColor;
+}
+
 
 .checkout-formulario .boton,
 .checkout-formulario .volver {

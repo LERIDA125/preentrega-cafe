@@ -6,7 +6,7 @@
 | Prioridad | P0 |
 | Estimación | 1 h |
 | Dependencias | T-07 |
-| Estado | ⬜ Pendiente |
+| Estado | 🟡 Escrito — falta ejecutar con credenciales |
 
 ## Objetivo
 
@@ -25,11 +25,11 @@ Que el alta nunca deje al usuario sin saber qué pasó: ni con el botón colgado
 
 ## Criterios de aceptación
 
-- [ ] Botón deshabilitado y con texto de progreso durante el envío.
-- [ ] Error de imagen y error de guardado se distinguen.
-- [ ] Confirmación visible y anunciada a lectores de pantalla.
-- [ ] Un error conserva los datos cargados.
-- [ ] No se puede enviar dos veces el mismo producto.
+- [x] Botón deshabilitado y con texto de progreso durante el envío.
+- [x] Error de imagen y error de guardado se distinguen.
+- [x] Confirmación visible y anunciada a lectores de pantalla.
+- [x] Un error conserva los datos cargados.
+- [x] No se puede enviar dos veces el mismo producto.
 
 ## Verificación manual
 
@@ -41,3 +41,9 @@ Que el alta nunca deje al usuario sin saber qué pasó: ni con el botón colgado
 
 - Firebase devuelve códigos como `storage/unauthorized` o `permission-denied`. Traducirlos a español en un mapa chico, no mostrar el código crudo.
 - Si se agrega un `toast` global, reutilizarlo en T-15 y T-16 en vez de duplicar avisos.
+- **Implementado:**
+  - `src/utils/firebaseErrors.js` traduce `permission-denied`, `unauthenticated`, `unavailable`, `failed-precondition` y los códigos de Storage. `codigoDeError` recorre hasta tres causas porque los servicios envuelven el error original.
+  - El mensaje de permisos es genérico ("esta acción") a propósito: T-15 y T-16 lo van a reutilizar tal cual.
+  - La confirmación usa una región viva persistente (`<div class="sr" role="status">`) además del aviso visible descartable. Insertar el `role="status"` junto con el texto funciona en la mayoría de los lectores, pero una región ya montada es más confiable.
+  - Doble submit: además de `isSubmitting`, `ProductForm` usa un ref para cortar dos envíos en el mismo tick antes de que React vuelva a renderizar.
+  - Se alinearon los textos por defecto: imagen (`No pudimos subir la imagen...`) y producto (`No pudimos guardar el producto...`).

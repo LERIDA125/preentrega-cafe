@@ -6,7 +6,7 @@
 | Prioridad | P1 |
 | Estimación | 3 h |
 | Dependencias | — |
-| Estado | ⬜ Pendiente |
+| Estado | ✅ Hecho — 14/11/2026 |
 
 ## Objetivo
 
@@ -42,11 +42,11 @@ Que el panel de administración tenga su propio chrome y no arrastre el header y
 
 ## Criterios de aceptación
 
-- [ ] `/admin/*` no muestra el header ni el footer públicos.
-- [ ] Las rutas públicas conservan foco, scroll y títulos.
-- [ ] `AdminLayout` tiene navegación propia y `Outlet`.
-- [ ] No se duplica la lógica de accesibilidad entre layouts.
-- [ ] El 404 público sigue funcionando.
+- [x] `/admin/*` no muestra el header ni el footer públicos.
+- [x] Las rutas públicas conservan foco, scroll y títulos.
+- [x] `AdminLayout` tiene navegación propia y `Outlet`.
+- [x] No se duplica la lógica de accesibilidad entre layouts.
+- [x] El 404 público sigue funcionando.
 
 ## Verificación manual
 
@@ -57,3 +57,4 @@ Navegar entre `/`, `/carrito` y `/admin`: el chrome cambia según la zona y el f
 - Este ticket es puramente estructural: no agrega funcionalidad visible salvo el chrome del panel.
 - Si `AdminLayout` se hace antes que T-10, el botón "Salir" puede quedar deshabilitado o comentado hasta tener `logout`.
 - No mover `CartProvider` al layout público: el carrito se usa en checkout y en la ficha, y separarlo complica el estado sin beneficio.
+- **Implementado:** `useFocoRuta` concentra la lógica de foco/scroll; `PublicLayout` y `AdminLayout` solo la consumen. El contenido de `/admin` es un estado vacío temporal (`src/pages/admin/AdminPanel.jsx`) que T-07 reemplaza por el listado.

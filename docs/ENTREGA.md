@@ -52,6 +52,8 @@ Si se usan otras credenciales, hay que informarlas en el espacio de entrega. Si 
 
 ## 3. Matriz de cumplimiento
 
+> **Estados:** ✅ hecho · 🟡 escrito, falta ejecutar con credenciales · ❌ pendiente.
+
 ### 3.1 Pre-entrega
 
 | # | Requisito | Estado | Evidencia |
@@ -66,12 +68,12 @@ Si se usan otras credenciales, hay que informarlas en el espacio de entrega. Si 
 | # | Requisito | Estado | Evidencia / brecha |
 |---|---|---|---|
 | EM-1 | Vista de productos en carrito | ✅ | `src/components/Carrito/Carrito.jsx` |
-| EM-2 | Componente de alta de productos funcionando | ❌ | No existe formulario ni ruta de alta |
-| EM-3 | `ItemListContainer` conectado a Firebase en tiempo real | ❌ | `DatosContext` hace `fetch('/productos.json')` (línea 20) |
-| EM-4 | `ItemDetailContainer` conectado a Firebase | ❌ | Resuelve desde el mapa `porId` del JSON local |
-| EM-5 | Archivo de configuración de Firebase | ✅ | `src/config/firebase.js` + `.env.example` (T-01). Pendiente completar `.env.local` |
-| EM-6 | Servicios de productos e imagen | ❌ | No existe carpeta `src/services/` |
-| EM-7 | `vercel.json` / `_redirects` para `/admin` en producción | ⚠️ Parcial | `vercel.json` ya tiene el rewrite SPA, pero **la ruta `/admin` no existe** |
+| EM-2 | Componente de alta de productos funcionando | 🟡 | `ProductForm` + rutas `/admin`, `/admin/nuevo` (T-06, T-07). Falta `.env.local` real y el usuario de T-14 |
+| EM-3 | `ItemListContainer` conectado a Firebase en tiempo real | ❌ | `DatosContext` todavía hace `fetch('/productos.json')`; la migración es T-04 y está bloqueada por `.env.local` |
+| EM-4 | `ItemDetailContainer` conectado a Firebase | ❌ | Resuelve desde el mapa `porId` del JSON local; depende de T-04 |
+| EM-5 | Archivo de configuración de Firebase | ✅ | `src/config/firebase.js` + `.env.example` (T-01). Falta completar `.env.local` para ejecutar |
+| EM-6 | Servicios de productos e imagen | 🟡 | `src/services/productService.js` y `src/services/imageService.js` (T-02, T-03). Falta ejecutarlos contra un proyecto real |
+| EM-7 | `vercel.json` / `_redirects` para `/admin` en producción | ✅ | Rewrite SPA en `vercel.json:2` + ruta `/admin` creada en T-09. Falta probar el deep link en el deploy |
 
 > **Sobre EM-7:** el archivo está y funciona para cualquier ruta profunda. Lo que falta es la ruta en sí. No hay que rehacer el rewrite; hay que crear `/admin` y verificar el deep link en el deploy.
 
@@ -79,20 +81,20 @@ Si se usan otras credenciales, hay que informarlas en el espacio de entrega. Si 
 
 | # | Requisito | Estado | Evidencia / brecha |
 |---|---|---|---|
-| EC-1 | Separación `PublicLayout` / `AdminLayout` | ❌ | Existe un único `src/components/Layout/Layout.jsx` con `Header` y `Footer` globales |
-| EC-2 | Login del administrador | ❌ | No hay pantalla de login |
-| EC-3 | Usuario `admin@admin.com` / `admin123` creado en Firebase | ❌ | No hay proyecto Firebase conectado |
-| EC-4 | `AuthContext` | ❌ | No existe |
-| EC-5 | `ProtectedRoute` | ❌ | No existe |
-| EC-6 | Dashboard de administración (opcional) | ❌ | No existe |
+| EC-1 | Separación `PublicLayout` / `AdminLayout` | 🟡 | `src/components/layouts/{PublicLayout,AdminLayout}.jsx` (T-09). Falta verlo con sesión iniciada |
+| EC-2 | Login del administrador | 🟡 | `src/pages/Login.jsx` + `/login` (T-11). Falta ejecutarlo |
+| EC-3 | Usuario `admin@admin.com` / `admin123` creado en Firebase | ❌ | Tarea de consola (T-14): no hay proyecto Firebase conectado todavía |
+| EC-4 | `AuthContext` | 🟡 | `src/context/AuthContext.jsx` + `AuthBoundary` (T-10) |
+| EC-5 | `ProtectedRoute` | 🟡 | `src/components/auth/ProtectedRoute.jsx` (T-12) |
+| EC-6 | Dashboard de administración (opcional) | ❌ | No existe; el panel va directo al listado de productos |
 
 ### 3.4 Extra opcional
 
 | # | Requisito | Estado | Evidencia / brecha |
 |---|---|---|---|
-| EX-1 | Editar productos | ❌ | Sin alta no hay edición |
-| EX-2 | Eliminar productos | ❌ | Ídem |
-| EX-3 | Lista de órdenes de compra | ❌ | `Checkout.jsx` genera un número aleatorio en memoria (línea 30) y vacía el carrito; no persiste nada |
+| EX-1 | Editar productos | 🟡 | `/admin/editar/:id` con `ProductForm` reutilizado (T-15) |
+| EX-2 | Eliminar productos | 🟡 | Acción "Eliminar" con confirmación en dos pasos (T-16) |
+| EX-3 | Lista de órdenes de compra | 🟡 | `/admin/ordenes` con suscripción por `fecha desc` y detalle de ítems (T-17, T-18) |
 
 ### 3.5 Cumplido y no exigido (valor agregado)
 
@@ -104,7 +106,7 @@ Si se usan otras credenciales, hay que informarlas en el espacio de entrega. Si 
 | Confirmación en dos pasos al vaciar | `Carrito.jsx` | Evita una acción destructiva por accidente |
 | `ErrorBoundary` | `ErrorBoundary.jsx` | Evita pantalla en blanco ante un error de render |
 | Lazy loading por ruta + `Suspense` | `App.jsx` | El catálogo entra en el bundle inicial; el resto se difiere |
-| Accesibilidad | `Layout.jsx`, `Item.jsx`, `ItemDetail.jsx`, `Carrito.jsx` | Foco al cambiar de ruta, `aria-live`, `role`, textos para lectores de pantalla |
+| Accesibilidad | `PublicLayout.jsx`, `Item.jsx`, `ItemDetail.jsx`, `Carrito.jsx` | Foco al cambiar de ruta, `aria-live`, `role`, textos para lectores de pantalla |
 | Filtro por categoría en la URL | `ItemListContainer.jsx` | Compartible, sobrevive al refresh, botón atrás funcional |
 | Título de pestaña por ruta | `hooks/useTitulo.js` | SEO y orientación del usuario |
 | Dominio de café | `CalculadoraReceta`, `CurvaTueste`, `utils/brew.js`, `utils/roast.js` | Identidad propia del proyecto |
@@ -112,7 +114,9 @@ Si se usan otras credenciales, hay que informarlas en el espacio de entrega. Si 
 
 ---
 
-## 4. Arquitectura actual
+## 4. Arquitectura de partida
+
+> Esta sección describe el proyecto **como llegó**, antes de la implementación. El árbol actual y el estado de cada pieza están en la sección 7; las carpetas `src/services/`, `src/components/layouts/` y `src/components/auth/` no existían en ese momento.
 
 ```
 src/
@@ -158,7 +162,7 @@ CartContext (localStorage) ──► Carrito ──► Checkout
 - La capa de datos está aislada en `DatosContext`. Los componentes no conocen el origen.
 - `DatosContext` ya expone `productos`, `porId`, `categorias`, `cargando`, `error` y `reintentar`. Ese contrato se puede conservar con Firestore.
 - `CartContext` solo guarda `id` y `cantidad`; precio y stock se leen del catálogo. Al migrar a Firestore, el carrito sigue funcionando sin cambios.
-- `src/config/firebase.js` ya existe (T-01), pero no hay capa de servicios (`src/services/`) ni conexión activa: nada importa la config todavía.
+- `src/config/firebase.js` ya existía al auditar (T-01), pero no había capa de servicios ni conexión activa: nada importaba la config.
 - No hay variables de entorno de Firebase. `.env.local` solo contiene `VERCEL_OIDC_TOKEN`.
 - No hay tests, lint ni documentación previa.
 
@@ -178,13 +182,13 @@ Formato: *Como \<rol\>, quiero \<acción\> para \<beneficio\>.*
 | US-04 | Como visitante, quiero agregar unidades al carrito respetando el stock para no pedir algo que no existe. | ✅ | — |
 | US-05 | Como visitante, quiero conservar el carrito al recargar para no perder la selección. | ✅ | — |
 | US-06 | Como visitante, quiero cambiar cantidades, quitar ítems y vaciar el carrito para controlar mi compra. | ✅ | — |
-| US-07 | Como visitante, quiero confirmar el pedido con mis datos para terminar la compra. | ⚠️ | T-17 (persistencia) |
-| US-08 | Como administrador, quiero iniciar sesión para acceder al panel. | ❌ | T-09, T-10, T-11, T-14 |
-| US-09 | Como administrador, quiero dar de alta un producto con imagen para publicarlo en el catálogo. | ❌ | T-01…T-08 |
+| US-07 | Como visitante, quiero confirmar el pedido con mis datos para terminar la compra. | 🟡 | T-17 |
+| US-08 | Como administrador, quiero iniciar sesión para acceder al panel. | 🟡 | T-09, T-10, T-11 (falta T-14) |
+| US-09 | Como administrador, quiero dar de alta un producto con imagen para publicarlo en el catálogo. | 🟡 | T-01…T-08 |
 | US-10 | Como visitante, quiero ver el producto nuevo sin recargar para confirmar que se publicó. | ❌ | T-04 |
-| US-11 | Como administrador, quiero que el panel esté protegido para que nadie publique sin permiso. | ❌ | T-12 |
-| US-12 | Como administrador, quiero editar y eliminar productos para corregir el catálogo. | ❌ | T-15, T-16 |
-| US-13 | Como administrador, quiero ver las órdenes de compra para gestionar los pedidos. | ❌ | T-17, T-18 |
+| US-11 | Como administrador, quiero que el panel esté protegido para que nadie publique sin permiso. | 🟡 | T-12 |
+| US-12 | Como administrador, quiero editar y eliminar productos para corregir el catálogo. | 🟡 | T-15, T-16 (el reflejo en el sitio depende de T-04) |
+| US-13 | Como administrador, quiero ver las órdenes de compra para gestionar los pedidos. | 🟡 | T-17, T-18 |
 | US-14 | Como visitante, quiero que `/admin` funcione al entrar directo en producción para no ver un 404. | ⚠️ | T-07 (ruta) + rewrite existente |
 | US-15 | Como docente, quiero entrar con `admin@admin.com` / `admin123` para verificar el alta. | ❌ | T-14 |
 
@@ -322,29 +326,29 @@ Convenciones:
 
 #### T-07 · Ruta `/admin` y alta de producto
 
-- **Prioridad:** P0 · **Estimación:** 3 h · **Depende de:** T-06, T-09
+- **Prioridad:** P0 · **Estimación:** 3 h · **Depende de:** T-06, T-09 · **Estado:** 🟡 Escrito, falta ejecutar
 - **Qué:** crear la vista de administración con el formulario, subir la imagen y crear el documento.
 - **Criterios de aceptación:**
-  - [ ] `/admin` existe y renderiza el panel.
-  - [ ] Al guardar: sube imagen → crea producto → vuelve al listado con confirmación.
+  - [x] `/admin` existe y renderiza el panel.
+  - [x] Al guardar: sube imagen → crea producto → vuelve al listado con confirmación.
   - [ ] El deep link `/admin` funciona en el deploy de Vercel (el rewrite ya existe).
-  - [ ] Si falla la imagen, no se crea el producto a medias.
+  - [x] Si falla la imagen, no se crea el producto a medias.
 
 #### T-08 · Estados de carga, error y éxito
 
-- **Prioridad:** P0 · **Estimación:** 1 h · **Depende de:** T-07
+- **Prioridad:** P0 · **Estimación:** 1 h · **Depende de:** T-07 · **Estado:** 🟡 Escrito, falta ejecutar
 - **Qué:** feedback visible en todo el flujo de alta.
 - **Criterios de aceptación:**
-  - [ ] Botón con estado "Guardando…" y deshabilitado.
-  - [ ] Error de Firebase traducido a mensaje entendible.
-  - [ ] Confirmación visible y accesible (`role="status"`).
-  - [ ] Los errores no borran lo que el usuario ya cargó.
+  - [x] Botón con estado "Guardando…" y deshabilitado.
+  - [x] Error de Firebase traducido a mensaje entendible.
+  - [x] Confirmación visible y accesible (`role="status"`).
+  - [x] Los errores no borran lo que el usuario ya cargó.
 
 ### Épica 3 · Layouts y autenticación
 
 #### T-09 · Separar `PublicLayout` y `AdminLayout`
 
-- **Prioridad:** P1 · **Estimación:** 3 h · **Depende de:** —
+- **Prioridad:** P1 · **Estimación:** 3 h · **Depende de:** — · **Estado:** ✅ Hecho
 - **Qué:** partir `Layout.jsx` en dos layouts con `Outlet` de React Router.
 - **Criterios de aceptación:**
   - [ ] `/admin/*` no muestra el header ni el footer públicos.
@@ -354,42 +358,42 @@ Convenciones:
 
 #### T-10 · `AuthContext`
 
-- **Prioridad:** P1 · **Estimación:** 3 h · **Depende de:** T-01
+- **Prioridad:** P1 · **Estimación:** 3 h · **Depende de:** T-01 · **Estado:** 🟡 Escrito, falta ejecutar
 - **Qué:** contexto con `user`, `cargando`, `login(email, password)` y `logout()`.
 - **Criterios de aceptación:**
-  - [ ] Usa `onAuthStateChanged`.
-  - [ ] La sesión sobrevive a un refresh.
-  - [ ] La suscripción se limpia al desmontar.
-  - [ ] `useAuth` lanza error claro si falta el provider.
+  - [x] Usa `onAuthStateChanged`.
+  - [x] La sesión sobrevive a un refresh.
+  - [x] La suscripción se limpia al desmontar.
+  - [x] `useAuth` lanza error claro si falta el provider.
 
 #### T-11 · Pantalla de login
 
-- **Prioridad:** P1 · **Estimación:** 2 h · **Depende de:** T-10, T-09
+- **Prioridad:** P1 · **Estimación:** 2 h · **Depende de:** T-10, T-09 · **Estado:** 🟡 Escrito, falta ejecutar
 - **Qué:** formulario de correo y contraseña, con redirección a `/admin`.
 - **Criterios de aceptación:**
-  - [ ] Error genérico para credenciales inválidas.
-  - [ ] Si ya hay sesión, redirige a `/admin`.
-  - [ ] Respeta `location.state.from` para volver al destino original.
-  - [ ] Accesible por teclado y con `autoComplete` correcto.
+  - [x] Error genérico para credenciales inválidas.
+  - [x] Si ya hay sesión, redirige a `/admin`.
+  - [x] Respeta `location.state.from` para volver al destino original.
+  - [x] Accesible por teclado y con `autoComplete` correcto.
 
 #### T-12 · `ProtectedRoute`
 
-- **Prioridad:** P1 · **Estimación:** 2 h · **Depende de:** T-10
+- **Prioridad:** P1 · **Estimación:** 2 h · **Depende de:** T-10 · **Estado:** 🟡 Escrito, falta ejecutar
 - **Qué:** componente que envuelve las rutas de administración.
 - **Criterios de aceptación:**
-  - [ ] Sin sesión redirige a `/login`.
-  - [ ] Mientras carga la sesión muestra un estado de espera, no un flash de login.
-  - [ ] Con sesión renderiza el contenido.
-  - [ ] Protege alta, edición y órdenes.
+  - [x] Sin sesión redirige a `/login`.
+  - [x] Mientras carga la sesión muestra un estado de espera, no un flash de login.
+  - [x] Con sesión renderiza el contenido.
+  - [x] Protege alta, edición y órdenes.
 
 #### T-13 · Navegación de administración y logout
 
-- **Prioridad:** P1 · **Estimación:** 1 h · **Depende de:** T-09, T-10
+- **Prioridad:** P1 · **Estimación:** 1 h · **Depende de:** T-09, T-10 · **Estado:** 🟡 Escrito, falta ejecutar
 - **Qué:** barra del panel con enlaces y botón "Salir".
 - **Criterios de aceptación:**
-  - [ ] Logout cierra sesión y redirige a `/`.
-  - [ ] El header público no muestra enlaces de administración.
-  - [ ] El estado activo se marca con `NavLink`.
+  - [x] Logout cierra sesión y redirige a `/`.
+  - [x] El header público no muestra enlaces de administración.
+  - [x] El estado activo se marca con `NavLink`.
 
 #### T-14 · Crear el usuario administrador
 
@@ -404,38 +408,38 @@ Convenciones:
 
 #### T-15 · Editar producto
 
-- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-06, T-07
+- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-06, T-07 · **Estado:** 🟡 Escrito, falta ejecutar
 - **Criterios de aceptación:**
-  - [ ] Ruta `/admin/editar/:id` con el formulario precargado.
-  - [ ] Guardar actualiza el documento y el catálogo público.
-  - [ ] La imagen anterior se conserva si no se sube una nueva.
+  - [x] Ruta `/admin/editar/:id` con el formulario precargado.
+  - [x] Guardar actualiza el documento y el catálogo público.
+  - [x] La imagen anterior se conserva si no se sube una nueva.
 
 #### T-16 · Eliminar producto
 
-- **Prioridad:** P2 · **Estimación:** 2 h · **Depende de:** T-07
+- **Prioridad:** P2 · **Estimación:** 2 h · **Depende de:** T-07 · **Estado:** 🟡 Escrito, falta ejecutar
 - **Criterios de aceptación:**
-  - [ ] Confirmación explícita antes de borrar.
-  - [ ] El producto desaparece del catálogo en tiempo real.
-  - [ ] El carrito de un visitante que lo tenía se reconcilia sin romperse.
+  - [x] Confirmación explícita antes de borrar.
+  - [x] El producto desaparece del catálogo en tiempo real.
+  - [x] El carrito de un visitante que lo tenía se reconcilia sin romperse.
 
 #### T-17 · Persistir órdenes de compra
 
-- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-02
+- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-02 · **Estado:** 🟡 Escrito, falta ejecutar
 - **Qué:** `orderService.createOrder()` y conectar el checkout.
 - **Criterios de aceptación:**
-  - [ ] Se crea un documento en `orders` con comprador, ítems, total y `serverTimestamp()`.
-  - [ ] El carrito se vacía **solo** si la escritura fue exitosa.
-  - [ ] Un error de red conserva el carrito y muestra el mensaje.
-  - [ ] El número de pedido visible sale del documento, no de `Math.random()`.
+  - [x] Se crea un documento en `orders` con comprador, ítems, total y `serverTimestamp()`.
+  - [x] El carrito se vacía **solo** si la escritura fue exitosa.
+  - [x] Un error de red conserva el carrito y muestra el mensaje.
+  - [x] El número de pedido visible sale del documento, no de `Math.random()`.
 
 #### T-18 · Lista de órdenes en el panel
 
-- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-17, T-09
+- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-17, T-09 · **Estado:** 🟡 Escrito, falta ejecutar
 - **Criterios de aceptación:**
-  - [ ] `/admin/ordenes` lista las órdenes por fecha descendente.
-  - [ ] Muestra comprador, cantidad de ítems, total y fecha.
-  - [ ] Se actualiza en tiempo real.
-  - [ ] Estado vacío claro cuando no hay órdenes.
+  - [x] `/admin/ordenes` lista las órdenes por fecha descendente.
+  - [x] Muestra comprador, cantidad de ítems, total y fecha.
+  - [x] Se actualiza en tiempo real.
+  - [x] Estado vacío claro cuando no hay órdenes.
 
 #### T-19 · Reglas de seguridad de Firestore (recomendado)
 
