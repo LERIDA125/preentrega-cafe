@@ -30,8 +30,10 @@
   --papel-inverso: #f7f6f2;
 
   /* Tipo */
-  --fuente-display: 'Bricolage Grotesque', 'Archivo Narrow', ui-sans-serif, system-ui, sans-serif;
-  --fuente-texto: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --fuente-display:
+    "Bricolage Grotesque", "Archivo Narrow", ui-sans-serif, system-ui,
+    sans-serif;
+  --fuente-texto: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
 
   --t-dato: 0.8125rem;
   --t-chico: 0.9375rem;
@@ -315,7 +317,10 @@ a {
   font-weight: 500;
   line-height: 1.2;
   text-align: center;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .boton-primario {
@@ -366,7 +371,9 @@ a {
   border-bottom: 1px solid var(--linea-fuerte);
   padding-bottom: 1px;
   align-self: flex-start;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .volver:hover {
@@ -418,7 +425,9 @@ a {
   font-size: var(--t-chico);
   color: var(--tinta-suave);
   border-bottom: 1px solid transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .barra-link:hover {
@@ -453,7 +462,9 @@ a {
   border-radius: var(--radio-control);
   font-size: var(--t-chico);
   color: var(--ascua);
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .barra-salir:hover:not(:disabled) {
@@ -525,8 +536,8 @@ a {
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-areas:
-      'marca carrito'
-      'links links';
+      "marca carrito"
+      "links links";
     row-gap: var(--e-2);
   }
 
@@ -630,7 +641,9 @@ a {
   font-size: var(--t-chico);
   border-bottom: 1px solid var(--tinta);
   padding-bottom: 1px;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .portada-enlace a:hover {
@@ -808,11 +821,11 @@ a {
   line-height: 1;
 }
 
-.curva-eje-x span[data-alineacion='inicio'] {
+.curva-eje-x span[data-alineacion="inicio"] {
   transform: none;
 }
 
-.curva-eje-x span[data-alineacion='fin'] {
+.curva-eje-x span[data-alineacion="fin"] {
   transform: translateX(-100%);
 }
 
@@ -1201,7 +1214,9 @@ a {
   font-size: 1.125rem;
   line-height: 1;
   color: var(--tinta);
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .selector-boton:hover:not(:disabled) {
@@ -1313,7 +1328,10 @@ a {
   border-radius: var(--radio-control);
   font-size: var(--t-chico);
   cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .receta-opcion:hover {
@@ -1354,7 +1372,9 @@ a {
   place-items: center;
   font-size: 1.125rem;
   line-height: 1;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .receta-menos:hover:not(:disabled) {
@@ -1554,7 +1574,9 @@ a {
   color: var(--tinta-suave);
   border-bottom: 1px solid var(--linea-fuerte);
   padding-bottom: 1px;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .linea-quitar:hover {
@@ -1710,8 +1732,8 @@ a {
   box-shadow: 0 0 0 2px var(--prusia-tenue);
 }
 
-.campo input[aria-invalid='true'],
-.campo textarea[aria-invalid='true'] {
+.campo input[aria-invalid="true"],
+.campo textarea[aria-invalid="true"] {
   border-color: var(--ascua);
 }
 
@@ -1866,7 +1888,9 @@ a {
   font-size: var(--t-chico);
   color: var(--prusia);
   border-bottom: 1px solid transparent;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .admin-fila-accion:hover {
@@ -1914,7 +1938,7 @@ a {
   display: flex;
   align-items: center;
   gap: var(--e-2);
-  font-family: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', monospace;
+  font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", monospace;
   font-size: var(--t-sub);
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -2045,7 +2069,6 @@ a {
   border-bottom-color: currentColor;
 }
 
-
 .checkout-formulario .boton,
 .checkout-formulario .volver {
   justify-self: start;
@@ -2132,7 +2155,9 @@ a {
   color: var(--tinta-suave);
   width: fit-content;
   border-bottom: 1px solid transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .pie-links a:hover {
@@ -2229,5 +2254,71 @@ a {
     --linea: #9a9384;
     --linea-fuerte: #6e6759;
     --tinta-suave: #4a4038;
+  }
+  /* =========================================
+   PORTADA RÚSTICA / HERO IMAGE
+========================================= */
+  .hero-portada {
+    /* Imagen premium de cafetería de Unsplash */
+    background-image: url("https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=1920&auto=format&fit=crop");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Efecto parallax */
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    border-bottom: 4px solid #5d4037; /* Marrón oscuro */
+  }
+
+  /* Tarjeta translúcida para que el texto contraste bien con la foto */
+  .hero-overlay {
+    background-color: rgba(
+      62,
+      39,
+      35,
+      0.85
+    ); /* Fondo marrón oscuro con 85% opacidad */
+    padding: 3rem 2rem;
+    border-radius: 8px;
+    max-width: 700px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-overlay .portada-titulo {
+    color: #fff;
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .hero-overlay .portada-bajada {
+    color: #e0e0e0;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .hero-boton {
+    font-size: 1.2rem;
+    padding: 0.8rem 2rem;
+    background-color: #d7ccc8;
+    color: #3e2723;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+
+  .hero-boton:hover {
+    background-color: #bcaaa4;
+  }
+
+  /* Fondo cálido para la sección de la curva */
+  .seccion-curva {
+    background-color: #f8f5f0;
+    padding: 3rem 1rem;
   }
 }
