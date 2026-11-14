@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCarrito } from '../../context/CartContext'
+import { useDatos } from '../../context/DatosContext'
 import { formatPrice } from '../../utils/format'
 import { useTitulo } from '../../hooks/useTitulo'
 
 const Carrito = () => {
+  const { loading } = useDatos()
   const {
     items,
     cantidadTotal,
@@ -23,6 +25,18 @@ const Carrito = () => {
   useEffect(() => {
     setArmado(false)
   }, [items.length])
+
+  if (loading) {
+    return (
+      <div className="hoja">
+        <div className="columna">
+          <p className="recargando" role="status">
+            Cargando catálogo…
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   if (items.length === 0) {
     return (

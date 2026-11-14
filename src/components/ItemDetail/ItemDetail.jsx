@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useCarrito } from '../../context/CartContext'
-import { formatAltura, formatPrice } from '../../utils/format'
-import CalculadoraReceta from '../CalculadoraReceta/CalculadoraReceta'
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useCarrito } from "../../context/CartContext";
+import { formatAltura, formatPrice } from "../../utils/format";
+import CalculadoraReceta from "../CalculadoraReceta/CalculadoraReceta";
 
 /**
  * Ficha de producto.
@@ -12,6 +12,9 @@ import CalculadoraReceta from '../CalculadoraReceta/CalculadoraReceta'
  * de simplemente estar apagado.
  */
 const ItemDetail = ({ producto }) => {
+  // Guard de seguridad: si React intenta renderizar antes de tener el producto, no explota
+  if (!producto) return null;
+
   const {
     id,
     nombre,
@@ -29,43 +32,52 @@ const ItemDetail = ({ producto }) => {
     proceso,
     punto,
     notas,
-  } = producto
+  } = producto;
 
-  const { agregar, disponible } = useCarrito()
-  const lugar = disponible(id)
-  const [cantidad, setCantidad] = useState(1)
-  const [aviso, setAviso] = useState(null)
+  // Normalización defensiva: garantiza que notas SIEMPRE sea un array
+  const notasSeguras = Array.isArray(notas) ? notas : notas ? [notas] : [];
+
+  const { agregar, disponible } = useCarrito();
+  const lugar = disponible(id);
+  const [cantidad, setCantidad] = useState(1);
+  const [aviso, setAviso] = useState(null);
 
   useEffect(() => {
-    setCantidad(1)
-    setAviso(null)
-  }, [id])
+    setCantidad(1);
+    setAviso(null);
+  }, [id]);
 
   const cambiarCantidad = (delta) => {
-    setAviso(null)
-    setCantidad((previo) => Math.min(Math.max(1, previo + delta), Math.max(1, lugar)))
-  }
+    setAviso(null);
+    setCantidad((previo) =>
+      Math.min(Math.max(1, previo + delta), Math.max(1, lugar)),
+    );
+  };
 
   const confirmarAlCarrito = () => {
-    const { agregados, omitidos, nombre: nombreProducto } = agregar(producto, cantidad)
+    const {
+      agregados,
+      omitidos,
+      nombre: nombreProducto,
+    } = agregar(producto, cantidad);
     if (agregados === 0) {
       setAviso({
-        tono: 'aviso',
+        tono: "aviso",
         texto: `Ya tenés los ${stock} disponibles de ${nombreProducto} en el carrito.`,
-      })
-      return
+      });
+      return;
     }
     setAviso({
-      tono: omitidos > 0 ? 'aviso' : 'ok',
+      tono: omitidos > 0 ? "aviso" : "ok",
       texto:
         omitidos > 0
           ? `Agregamos ${agregados} de ${nombreProducto}. Solo quedaban ${lugar} disponibles.`
-          : `Agregamos ${agregados} ${agregados === 1 ? 'unidad' : 'unidades'} de ${nombreProducto} al carrito.`,
-    })
-  }
+          : `Agregamos ${agregados} ${agregados === 1 ? "unidad" : "unidades"} de ${nombreProducto} al carrito.`,
+    });
+  };
 
-  const sinStock = lugar === 0
-  const quedaUno = lugar === 1
+  const sinStock = lugar === 0;
+  const quedaUno = lugar === 1;
 
   return (
     <>
@@ -73,7 +85,13 @@ const ItemDetail = ({ producto }) => {
         <div className="columna">
           <article className="ficha-producto">
             <div className="ficha-producto-media">
-              <img src={imagen} alt={nombre} width={ancho} height={alto} decoding="async" />
+              <img
+                src={imagen}
+                alt={nombre}
+                width={ancho}
+                height={alto}
+                decoding="async"
+              />
             </div>
 
             <div className="ficha-producto-info">
@@ -108,7 +126,12 @@ const ItemDetail = ({ producto }) => {
                 </div>
                 <div className="ficha-par">
                   <dt>Notas de cata</dt>
-                  <dd>{notas.join(', ')}</dd>
+                  {/* Uso del array seguro para evitar el crash del .join */}
+                  <dd>
+                    {notasSeguras.length > 0
+                      ? notasSeguras.join(", ")
+                      : "Sin especificar"}
+                  </dd>
                 </div>
               </dl>
 
@@ -146,23 +169,29 @@ const ItemDetail = ({ producto }) => {
                     onClick={confirmarAlCarrito}
                     disabled={sinStock}
                   >
-                    {sinStock ? 'Sin stock' : `Agregar al carrito`}
+                    {sinStock ? "Sin stock" : `Agregar al carrito`}
                   </button>
                 </div>
 
                 <p className="compra-stock">
                   {sinStock
-                    ? 'No queda stock de este lote. Escribinos y te avisamos cuando vuelva.'
-                    : `Quedan ${lugar} ${lugar === 1 ? 'unidad' : 'unidades'} disponibles`}
+                    ? "No queda stock de este lote. Escribinos y te avisamos cuando vuelva."
+                    : `Quedan ${lugar} ${lugar === 1 ? "unidad" : "unidades"} disponibles`}
                 </p>
 
                 {aviso && (
-                  <p className={`aviso aviso-${aviso.tono}`} role="status" aria-live="polite">
+                  <p
+                    className={`aviso aviso-${aviso.tono}`}
+                    role="status"
+                    aria-live="polite"
+                  >
                     {aviso.texto}
                   </p>
                 )}
 
-                {quedaUno && <p className="compra-ultimo">Queda una sola unidad.</p>}
+                {quedaUno && (
+                  <p className="compra-ultimo">Queda una sola unidad.</p>
+                )}
               </div>
 
               <Link to="/#catalogo" className="volver">
@@ -175,11 +204,15 @@ const ItemDetail = ({ producto }) => {
 
       <div className="hoja">
         <div className="columna">
-          <CalculadoraReceta producto={producto} compacto />
+          {/* Se inyecta el producto con las notas normalizadas para proteger también a la calculadora */}
+          <CalculadoraReceta
+            producto={{ ...producto, notas: notasSeguras }}
+            compacto
+          />
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default ItemDetail
+export default ItemDetail;

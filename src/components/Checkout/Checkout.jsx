@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useCarrito } from '../../context/CartContext'
+import { useDatos } from '../../context/DatosContext'
 import { createOrder, generarNumeroOrden } from '../../services/orderService'
 import { formatPrice } from '../../utils/format'
 import { useTitulo } from '../../hooks/useTitulo'
@@ -14,6 +15,7 @@ import { useTitulo } from '../../hooks/useTitulo'
  * reintentar.
  */
 const Checkout = () => {
+  const { loading } = useDatos()
   const { items, subtotal, vaciar } = useCarrito()
   const [datos, setDatos] = useState({ nombre: '', email: '', telefono: '' })
   const [orden, setOrden] = useState(null)
@@ -76,6 +78,18 @@ const Checkout = () => {
               Volver al catálogo
             </Link>
           </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="hoja">
+        <div className="columna">
+          <p className="recargando" role="status">
+            Cargando catálogo…
+          </p>
         </div>
       </div>
     )
