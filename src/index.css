@@ -2188,6 +2188,28 @@ a {
   border-color: var(--linea-fuerte);
 }
 
+/* Entrada al panel: presente para quien la busca, discreta para quien navega. */
+.pie-links a.pie-acceso {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: var(--e-2);
+  padding-bottom: 0.1em;
+  font-size: 0.95em;
+  letter-spacing: 0.01em;
+  opacity: 0.85;
+  border-bottom-color: var(--linea);
+  transition:
+    opacity 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.pie-links a.pie-acceso:hover,
+.pie-links a.pie-acceso:focus-visible {
+  opacity: 1;
+  border-bottom-color: var(--linea-fuerte);
+}
+
 .pie-equipo {
   display: grid;
   gap: var(--e-3);

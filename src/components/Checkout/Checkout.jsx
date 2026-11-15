@@ -47,10 +47,11 @@ const Checkout = () => {
       email: datos.email.trim(),
       telefono: datos.telefono.trim(),
     }
-    const total = subtotal
 
     try {
-      const id = await createOrder({ numero, buyer: comprador, items, total })
+      // El total que vale es el que calcula el servicio con los precios de la
+      // base, no el que muestra el carrito.
+      const { id, total } = await createOrder({ numero, buyer: comprador, items })
       vaciar()
       setOrden({ id, numero, ...comprador, total })
     } catch (fallo) {

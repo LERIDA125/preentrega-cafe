@@ -5,7 +5,7 @@
 | Proyecto | `preentrega-cafe` — Café de Origen |
 | Repositorio | https://github.com/LERIDA125/preentrega-cafe |
 | Deploy | Vercel (`preentrega-cafe`) |
-| Fecha de evaluación | 14/11/2026 |
+| Fecha de evaluación | 14/11/2026 · actualizado 15/11/2026 |
 | Alcance evaluado | Pre-entrega + entrega mínima + entrega completa + extra opcional |
 | Documento | `docs/ENTREGA.md` |
 
@@ -13,20 +13,31 @@
 
 ## 1. Resumen ejecutivo
 
-El proyecto **cumple y supera la pre-entrega**, pero **no cumple la entrega completa**.
-
-Hoy es una aplicación de catálogo y carrito con datos estáticos (`public/productos.json`). La dependencia de Firebase y el módulo de configuración ya existen (T-01), pero **no están conectados**: el catálogo sigue leyendo el JSON local. Tampoco hay autenticación ni panel de administración. La entrega mínima está cumplida en un 25 %: falta toda la capa de datos remota y el alta de productos.
+El proyecto **cumple la pre-entrega, la entrega mínima, la entrega completa y el extra
+opcional**. Es una aplicación de catálogo y carrito sobre Firestore en tiempo real, con panel
+de administración autenticado y gestión de órdenes de compra.
 
 | Bloque | Cumplido | Total | Estado |
 |---|---|---|---|
 | Pre-entrega | 4 | 4 | ✅ Completo |
-| Entrega mínima | 1,5 | 6 | ⚠️ Parcial |
-| Entrega completa | 0 | 5 | ❌ Pendiente |
-| Extra opcional | 0 | 2 | ❌ Pendiente |
+| Entrega mínima | 7 | 7 | ✅ Completo |
+| Entrega completa | 5 | 5 | ✅ Completo |
+| Extra opcional | 3 | 3 | ✅ Completo |
 
-**Conclusión:** el trabajo pendiente no es de estética ni de componentes de carrito —eso está resuelto y por encima del promedio—. El trabajo pendiente es **infraestructura**: Firebase, autenticación, layout de administración y el formulario de alta.
+**Verificación del 15/11/2026**
 
-**Dato clave para planificar:** la migración a Firestore es barata. Los componentes consumen `useDatos()`, no hacen `fetch` directo. Cambiar `src/context/DatosContext.jsx` alcanza para que todo el catálogo pase a Firestore. No hay que tocar `ItemListContainer`, `ItemDetailContainer`, `Carrito` ni `Checkout`.
+- `npm run build` pasa sin errores.
+- El deploy de Vercel responde `200` con `index.html` en `/`, `/admin`, `/admin/nuevo`,
+  `/login`, `/carrito` y `/producto/:id`: el rewrite cubre las rutas profundas y el F5.
+- Las credenciales `admin@admin.com` / `admin123` inician sesión contra el proyecto de Firebase.
+
+**Conclusión:** la arquitectura está terminada. La capa de datos vive en `src/services/` y
+ningún componente importa `firebase/*`; los contextos (`DatosContext`, `CartContext`,
+`AuthContext`) exponen el contrato que consumen las vistas. Cambiar el backend no toca la UI.
+
+**Deuda conocida (no exigida por la consigna):** tests automatizados, lint configurado, y el
+descuento de stock en una Cloud Function — hoy lo hace una transacción del cliente con una
+regla de Firestore acotada a ese único campo.
 
 ---
 
@@ -52,7 +63,7 @@ Si se usan otras credenciales, hay que informarlas en el espacio de entrega. Si 
 
 ## 3. Matriz de cumplimiento
 
-> **Estados:** ✅ hecho · 🟡 escrito, falta ejecutar con credenciales · ❌ pendiente.
+> **Estados:** ✅ implementado y verificado en el código.
 
 ### 3.1 Pre-entrega
 
@@ -68,33 +79,33 @@ Si se usan otras credenciales, hay que informarlas en el espacio de entrega. Si 
 | # | Requisito | Estado | Evidencia / brecha |
 |---|---|---|---|
 | EM-1 | Vista de productos en carrito | ✅ | `src/components/Carrito/Carrito.jsx` |
-| EM-2 | Componente de alta de productos funcionando | 🟡 | `ProductForm` + rutas `/admin`, `/admin/nuevo` (T-06, T-07). Falta `.env.local` real y el usuario de T-14 |
-| EM-3 | `ItemListContainer` conectado a Firebase en tiempo real | ❌ | `DatosContext` todavía hace `fetch('/productos.json')`; la migración es T-04 y está bloqueada por `.env.local` |
-| EM-4 | `ItemDetailContainer` conectado a Firebase | ❌ | Resuelve desde el mapa `porId` del JSON local; depende de T-04 |
-| EM-5 | Archivo de configuración de Firebase | ✅ | `src/config/firebase.js` + `.env.example` (T-01). Falta completar `.env.local` para ejecutar |
-| EM-6 | Servicios de productos e imagen | 🟡 | `src/services/productService.js` y `src/services/imageService.js` (T-02, T-03). Falta ejecutarlos contra un proyecto real |
-| EM-7 | `vercel.json` / `_redirects` para `/admin` en producción | ✅ | Rewrite SPA en `vercel.json:2` + ruta `/admin` creada en T-09. Falta probar el deep link en el deploy |
+| EM-2 | Componente de alta de productos funcionando | ✅ | `ProductForm` → `uploadProductImage` → `createProduct`, con rollback si falla el documento |
+| EM-3 | `ItemListContainer` conectado a Firebase en tiempo real | ✅ | `DatosContext` → `subscribeProducts` (`onSnapshot`) |
+| EM-4 | `ItemDetailContainer` conectado a Firebase | ✅ | Resuelve del `porId` del mismo snapshot, sin consulta extra |
+| EM-5 | Archivo de configuración de Firebase | ✅ | `src/config/firebase.js` + `.env.example`, con validación de variables faltantes |
+| EM-6 | Servicios de productos e imagen | ✅ | `productService.js`, `imageService.js` y `orderService.js`, ejecutados contra el proyecto real |
+| EM-7 | `vercel.json` / `_redirects` para `/admin` en producción | ✅ | Rewrite en `vercel.json`; `/admin` y `/admin/nuevo` responden 200 con `index.html` en el deploy |
 
-> **Sobre EM-7:** el archivo está y funciona para cualquier ruta profunda. Lo que falta es la ruta en sí. No hay que rehacer el rewrite; hay que crear `/admin` y verificar el deep link en el deploy.
+> **Sobre EM-7:** verificado el 15/11/2026 contra el deploy de Vercel. Las rutas profundas devuelven `index.html`, así que recargar con F5 no rompe.
 
 ### 3.3 Entrega completa
 
 | # | Requisito | Estado | Evidencia / brecha |
 |---|---|---|---|
-| EC-1 | Separación `PublicLayout` / `AdminLayout` | 🟡 | `src/components/layouts/{PublicLayout,AdminLayout}.jsx` (T-09). Falta verlo con sesión iniciada |
-| EC-2 | Login del administrador | 🟡 | `src/pages/Login.jsx` + `/login` (T-11). Falta ejecutarlo |
-| EC-3 | Usuario `admin@admin.com` / `admin123` creado en Firebase | ❌ | Tarea de consola (T-14): no hay proyecto Firebase conectado todavía |
-| EC-4 | `AuthContext` | 🟡 | `src/context/AuthContext.jsx` + `AuthBoundary` (T-10) |
-| EC-5 | `ProtectedRoute` | 🟡 | `src/components/auth/ProtectedRoute.jsx` (T-12) |
-| EC-6 | Dashboard de administración (opcional) | ❌ | No existe; el panel va directo al listado de productos |
+| EC-1 | Separación `PublicLayout` / `AdminLayout` | ✅ | Rutas anidadas con `Outlet`; el panel no arrastra header ni footer públicos |
+| EC-2 | Login del administrador | ✅ | `src/pages/Login.jsx` + `/login`, con retorno al destino original |
+| EC-3 | Usuario `admin@admin.com` / `admin123` creado en Firebase | ✅ | Verificado contra Firebase Auth; documentado en `README.md` |
+| EC-4 | `AuthContext` | ✅ | `src/context/AuthContext.jsx` + `AuthBoundary` |
+| EC-5 | `ProtectedRoute` | ✅ | `src/components/auth/ProtectedRoute.jsx`; espera la sesión antes de redirigir |
+| EC-6 | Dashboard de administración (opcional) | — | No implementado; la consigna lo marca opcional y `/admin` arranca en el listado de productos |
 
 ### 3.4 Extra opcional
 
 | # | Requisito | Estado | Evidencia / brecha |
 |---|---|---|---|
-| EX-1 | Editar productos | 🟡 | `/admin/editar/:id` con `ProductForm` reutilizado (T-15) |
-| EX-2 | Eliminar productos | 🟡 | Acción "Eliminar" con confirmación en dos pasos (T-16) |
-| EX-3 | Lista de órdenes de compra | 🟡 | `/admin/ordenes` con suscripción por `fecha desc` y detalle de ítems (T-17, T-18) |
+| EX-1 | Editar productos | ✅ | `/admin/editar/:id` con `ProductForm` reutilizado; conserva la imagen si no se sube otra |
+| EX-2 | Eliminar productos | ✅ | Acción "Eliminar" con confirmación en dos pasos y limpieza de Storage |
+| EX-3 | Lista de órdenes de compra | ✅ | `/admin/ordenes` con suscripción por `fecha desc` y detalle de ítems |
 
 ### 3.5 Cumplido y no exigido (valor agregado)
 
@@ -102,6 +113,7 @@ Si se usan otras credenciales, hay que informarlas en el espacio de entrega. Si 
 |---|---|---|
 | Stock real en el carrito | `CartContext.jsx` | Valida al agregar, al cambiar cantidad y al hidratar desde `localStorage` |
 | Persistencia y reconciliación del carrito | `CartContext.jsx` | Un carrito viejo se ajusta al stock actual y avisa qué se quitó |
+| Descuento de stock transaccional | `orderService.js` | La orden y el descuento son una sola operación: no se puede sobrevender |
 | Checkout con formulario y confirmación | `Checkout.jsx` | Completa el flujo de compra |
 | Confirmación en dos pasos al vaciar | `Carrito.jsx` | Evita una acción destructiva por accidente |
 | `ErrorBoundary` | `ErrorBoundary.jsx` | Evita pantalla en blanco ante un error de render |
@@ -182,15 +194,15 @@ Formato: *Como \<rol\>, quiero \<acción\> para \<beneficio\>.*
 | US-04 | Como visitante, quiero agregar unidades al carrito respetando el stock para no pedir algo que no existe. | ✅ | — |
 | US-05 | Como visitante, quiero conservar el carrito al recargar para no perder la selección. | ✅ | — |
 | US-06 | Como visitante, quiero cambiar cantidades, quitar ítems y vaciar el carrito para controlar mi compra. | ✅ | — |
-| US-07 | Como visitante, quiero confirmar el pedido con mis datos para terminar la compra. | 🟡 | T-17 |
-| US-08 | Como administrador, quiero iniciar sesión para acceder al panel. | 🟡 | T-09, T-10, T-11 (falta T-14) |
-| US-09 | Como administrador, quiero dar de alta un producto con imagen para publicarlo en el catálogo. | 🟡 | T-01…T-08 |
-| US-10 | Como visitante, quiero ver el producto nuevo sin recargar para confirmar que se publicó. | ❌ | T-04 |
-| US-11 | Como administrador, quiero que el panel esté protegido para que nadie publique sin permiso. | 🟡 | T-12 |
-| US-12 | Como administrador, quiero editar y eliminar productos para corregir el catálogo. | 🟡 | T-15, T-16 (el reflejo en el sitio depende de T-04) |
-| US-13 | Como administrador, quiero ver las órdenes de compra para gestionar los pedidos. | 🟡 | T-17, T-18 |
-| US-14 | Como visitante, quiero que `/admin` funcione al entrar directo en producción para no ver un 404. | ⚠️ | T-07 (ruta) + rewrite existente |
-| US-15 | Como docente, quiero entrar con `admin@admin.com` / `admin123` para verificar el alta. | ❌ | T-14 |
+| US-07 | Como visitante, quiero confirmar el pedido con mis datos para terminar la compra. | ✅ | T-17 |
+| US-08 | Como administrador, quiero iniciar sesión para acceder al panel. | ✅ | T-09, T-10, T-11 (falta T-14) |
+| US-09 | Como administrador, quiero dar de alta un producto con imagen para publicarlo en el catálogo. | ✅ | T-01…T-08 |
+| US-10 | Como visitante, quiero ver el producto nuevo sin recargar para confirmar que se publicó. | ✅ | T-04 |
+| US-11 | Como administrador, quiero que el panel esté protegido para que nadie publique sin permiso. | ✅ | T-12 |
+| US-12 | Como administrador, quiero editar y eliminar productos para corregir el catálogo. | ✅ | T-15, T-16 (el reflejo en el sitio depende de T-04) |
+| US-13 | Como administrador, quiero ver las órdenes de compra para gestionar los pedidos. | ✅ | T-17, T-18 |
+| US-14 | Como visitante, quiero que `/admin` funcione al entrar directo en producción para no ver un 404. | ✅ | T-07 (ruta) + rewrite existente |
+| US-15 | Como docente, quiero entrar con `admin@admin.com` / `admin123` para verificar el alta. | ✅ | T-14 |
 
 ---
 
@@ -211,7 +223,7 @@ Formato: *Como \<rol\>, quiero \<acción\> para \<beneficio\>.*
 - **Flujo principal:** abre ficha → ajusta cantidad → agrega al carrito → revisa `/carrito` → va a `/checkout` → completa nombre y correo → confirma → recibe número de pedido.
 - **Alternativos:** sin stock → botón deshabilitado con motivo; cantidad mayor al stock → se agrega lo disponible y se avisa; carrito vacío en checkout → mensaje con link al catálogo.
 - **Postcondición:** carrito vacío y pedido confirmado en pantalla.
-- **Estado:** ✅ implementado, con la salvedad de que el pedido **no se persiste** (ver T-17).
+- **Estado:** ✅ implementado. La orden se persiste en `orders` y el stock se descuenta en la misma transacción.
 
 ### CU-03 · Alta de producto
 
@@ -220,27 +232,27 @@ Formato: *Como \<rol\>, quiero \<acción\> para \<beneficio\>.*
 - **Flujo principal:** entra a `/admin` → "Nuevo producto" → completa nombre, descripción, precio, categoría, stock y datos de origen → sube imagen → envía → se crea el documento en Firestore → vuelve al listado con confirmación → el producto aparece en el catálogo público sin recargar.
 - **Alternativos:** campos inválidos → errores inline y envío bloqueado; falla la subida de imagen → no se crea el producto y se muestra el error; sin sesión → redirección a `/login`.
 - **Postcondición:** documento nuevo en `productos` con `creadoEn`.
-- **Estado:** ❌ no implementado.
+- **Estado:** ✅ implementado.
 
 ### CU-04 · Iniciar sesión
 
 - **Actor:** administrador.
 - **Flujo principal:** entra a `/login` → ingresa `admin@admin.com` / `admin123` → `AuthContext` actualiza el usuario → redirección a `/admin`.
 - **Alternativos:** credenciales inválidas → mensaje genérico sin filtrar qué campo falló; sesión existente → redirección automática a `/admin`; acceso directo a `/admin` sin sesión → redirección a `/login` y vuelta al destino original.
-- **Estado:** ❌ no implementado.
+- **Estado:** ✅ implementado.
 
 ### CU-05 · Editar y eliminar producto
 
 - **Actor:** administrador autenticado.
 - **Flujo principal:** entra a `/admin` → elige producto → edita campos → guarda → se actualiza la ficha pública. Para eliminar: acción destructiva → confirmación → se borra el documento.
-- **Estado:** ❌ no implementado (extra opcional).
+- **Estado:** ✅ implementado (extra opcional).
 
 ### CU-06 · Ver órdenes de compra
 
 - **Actor:** administrador autenticado.
 - **Flujo principal:** entra a `/admin/ordenes` → ve las órdenes ordenadas por fecha con comprador, ítems y total.
 - **Precondición:** las órdenes se persisten al confirmar el checkout (T-17).
-- **Estado:** ❌ no implementado (extra opcional).
+- **Estado:** ✅ implementado (extra opcional).
 
 ---
 
@@ -262,11 +274,11 @@ Convenciones:
 - **Qué:** agregar `firebase` a `package.json` y crear `src/config/firebase.js` que inicialice `app`, `db` (Firestore), `auth` y `storage`.
 - **Archivos:** `package.json`, `src/config/firebase.js`, `.env.example`, `.gitignore`.
 - **Criterios de aceptación:**
-  - [ ] `firebase` instalado y el build compila.
-  - [ ] El módulo exporta `app`, `db`, `auth` y `storage`.
-  - [ ] Las claves se leen de `import.meta.env.VITE_FIREBASE_*`, nunca hardcodeadas.
-  - [ ] `.env.example` documenta las seis variables requeridas.
-  - [ ] `.env.local` sigue ignorado por git.
+  - [x] `firebase` instalado y el build compila.
+  - [x] El módulo exporta `app`, `db`, `auth` y `storage`.
+  - [x] Las claves se leen de `import.meta.env.VITE_FIREBASE_*`, nunca hardcodeadas.
+  - [x] `.env.example` documenta las seis variables requeridas.
+  - [x] `.env.local` sigue ignorado por git.
 - **Gotcha detectado:** `.gitignore` tiene `.env*`, así que `.env.example` también queda ignorado. Hay que agregar `!.env.example` o el archivo nunca se versiona.
 
 #### T-02 · Servicio de productos
@@ -274,42 +286,42 @@ Convenciones:
 - **Prioridad:** P0 · **Estimación:** 3 h · **Depende de:** T-01 · **Estado:** ✅ Hecho
 - **Qué:** crear `src/services/productService.js` con `getProducts`, `subscribeProducts`, `getProductById`, `createProduct`, `updateProduct` y `deleteProduct`.
 - **Criterios de aceptación:**
-  - [ ] `subscribeProducts(callback)` devuelve la función de desuscripción.
-  - [ ] `createProduct` agrega `creadoEn` con `serverTimestamp()`.
-  - [ ] Ningún componente importa `firebase/firestore` directamente.
-  - [ ] Los errores se propagan con mensaje legible.
+  - [x] `subscribeProducts(callback)` devuelve la función de desuscripción.
+  - [x] `createProduct` agrega `creadoEn` con `serverTimestamp()`.
+  - [x] Ningún componente importa `firebase/firestore` directamente.
+  - [x] Los errores se propagan con mensaje legible.
 
 #### T-03 · Servicio de imágenes
 
 - **Prioridad:** P0 · **Estimación:** 2 h · **Depende de:** T-01 · **Estado:** ✅ Hecho
 - **Qué:** crear `src/services/imageService.js` con `uploadProductImage(file)` que suba a Storage y devuelva la URL pública.
 - **Criterios de aceptación:**
-  - [ ] Valida tipo (`image/*`) y tamaño máximo (por ejemplo 2 MB).
-  - [ ] Devuelve `downloadURL`.
-  - [ ] Nombre de archivo único para no pisar imágenes.
-  - [ ] Error controlado si falla la subida.
+  - [x] Valida tipo (`image/*`) y tamaño máximo (por ejemplo 2 MB).
+  - [x] Devuelve `downloadURL`.
+  - [x] Nombre de archivo único para no pisar imágenes.
+  - [x] Error controlado si falla la subida.
 
 #### T-04 · Migrar `DatosContext` a Firestore en tiempo real
 
-- **Prioridad:** P0 · **Estimación:** 3 h · **Depende de:** T-02, T-05
+- **Prioridad:** P0 · **Estimación:** 3 h · **Depende de:** T-02, T-05 · **Estado:** ✅ Hecho
 - **Qué:** reemplazar `fetch('/productos.json')` por una suscripción `onSnapshot` a la colección `productos`.
 - **Archivos:** `src/context/DatosContext.jsx`.
 - **Criterios de aceptación:**
-  - [ ] Un producto nuevo aparece en el catálogo sin recargar.
-  - [ ] Se conserva el contrato `{ productos, porId, categorias, cargando, error, reintentar }`.
-  - [ ] La suscripción se cancela al desmontar.
-  - [ ] Las categorías se recalculan solas.
-  - [ ] `ItemListContainer` e `ItemDetailContainer` no se modifican.
+  - [x] Un producto nuevo aparece en el catálogo sin recargar.
+  - [x] Se conserva el contrato `{ productos, porId, categorias, cargando, error, reintentar }`.
+  - [x] La suscripción se cancela al desmontar.
+  - [x] Las categorías se recalculan solas.
+  - [x] `ItemListContainer` e `ItemDetailContainer` no se modifican.
 
 #### T-05 · Cargar los productos existentes en Firestore
 
-- **Prioridad:** P0 · **Estimación:** 1 h · **Depende de:** T-01 · **Estado:** 🟡 Escrito, falta ejecutar
+- **Prioridad:** P0 · **Estimación:** 1 h · **Depende de:** T-01 · **Estado:** ✅ Hecho
 - **Qué:** migrar los seis productos de `public/productos.json` a la colección `productos`, conservando todos los campos.
 - **Criterios de aceptación:**
-  - [ ] La colección tiene los seis documentos.
-  - [ ] Los `id` de Firestore reemplazan a los `id` numéricos sin romper rutas.
-  - [ ] El catálogo público muestra los seis productos desde Firestore.
-  - [ ] Se decide y documenta si `public/productos.json` queda como respaldo o se elimina.
+  - [x] La colección tiene los seis documentos.
+  - [x] Los `id` de Firestore reemplazan a los `id` numéricos sin romper rutas.
+  - [x] El catálogo público muestra los seis productos desde Firestore.
+  - [x] Se decide y documenta si `public/productos.json` queda como respaldo o se elimina.
 
 ### Épica 2 · Alta de productos
 
@@ -318,25 +330,25 @@ Convenciones:
 - **Prioridad:** P0 · **Estimación:** 4 h · **Depende de:** T-02, T-03 · **Estado:** ✅ Hecho
 - **Qué:** formulario controlado con nombre, descripción, precio, categoría, stock, lote, origen, altura, variedad, proceso, punto, notas e imagen.
 - **Criterios de aceptación:**
-  - [ ] Todos los campos obligatorios tienen validación con mensaje inline.
-  - [ ] Precio y stock aceptan solo números positivos.
-  - [ ] `notas` se carga como lista separada por comas.
-  - [ ] El formulario es reutilizable para alta y edición.
-  - [ ] Envío bloqueado mientras se procesa; sin doble submit.
+  - [x] Todos los campos obligatorios tienen validación con mensaje inline.
+  - [x] Precio y stock aceptan solo números positivos.
+  - [x] `notas` se carga como lista separada por comas.
+  - [x] El formulario es reutilizable para alta y edición.
+  - [x] Envío bloqueado mientras se procesa; sin doble submit.
 
 #### T-07 · Ruta `/admin` y alta de producto
 
-- **Prioridad:** P0 · **Estimación:** 3 h · **Depende de:** T-06, T-09 · **Estado:** 🟡 Escrito, falta ejecutar
+- **Prioridad:** P0 · **Estimación:** 3 h · **Depende de:** T-06, T-09 · **Estado:** ✅ Hecho
 - **Qué:** crear la vista de administración con el formulario, subir la imagen y crear el documento.
 - **Criterios de aceptación:**
   - [x] `/admin` existe y renderiza el panel.
   - [x] Al guardar: sube imagen → crea producto → vuelve al listado con confirmación.
-  - [ ] El deep link `/admin` funciona en el deploy de Vercel (el rewrite ya existe).
+  - [x] El deep link `/admin` funciona en el deploy de Vercel (el rewrite ya existe).
   - [x] Si falla la imagen, no se crea el producto a medias.
 
 #### T-08 · Estados de carga, error y éxito
 
-- **Prioridad:** P0 · **Estimación:** 1 h · **Depende de:** T-07 · **Estado:** 🟡 Escrito, falta ejecutar
+- **Prioridad:** P0 · **Estimación:** 1 h · **Depende de:** T-07 · **Estado:** ✅ Hecho
 - **Qué:** feedback visible en todo el flujo de alta.
 - **Criterios de aceptación:**
   - [x] Botón con estado "Guardando…" y deshabilitado.
@@ -351,14 +363,14 @@ Convenciones:
 - **Prioridad:** P1 · **Estimación:** 3 h · **Depende de:** — · **Estado:** ✅ Hecho
 - **Qué:** partir `Layout.jsx` en dos layouts con `Outlet` de React Router.
 - **Criterios de aceptación:**
-  - [ ] `/admin/*` no muestra el header ni el footer públicos.
-  - [ ] Las rutas públicas conservan el comportamiento actual (foco, scroll, títulos).
-  - [ ] `AdminLayout` tiene navegación propia (productos, órdenes, salir).
-  - [ ] No se duplica la lógica de accesibilidad.
+  - [x] `/admin/*` no muestra el header ni el footer públicos.
+  - [x] Las rutas públicas conservan el comportamiento actual (foco, scroll, títulos).
+  - [x] `AdminLayout` tiene navegación propia (productos, órdenes, salir).
+  - [x] No se duplica la lógica de accesibilidad.
 
 #### T-10 · `AuthContext`
 
-- **Prioridad:** P1 · **Estimación:** 3 h · **Depende de:** T-01 · **Estado:** 🟡 Escrito, falta ejecutar
+- **Prioridad:** P1 · **Estimación:** 3 h · **Depende de:** T-01 · **Estado:** ✅ Hecho
 - **Qué:** contexto con `user`, `cargando`, `login(email, password)` y `logout()`.
 - **Criterios de aceptación:**
   - [x] Usa `onAuthStateChanged`.
@@ -368,7 +380,7 @@ Convenciones:
 
 #### T-11 · Pantalla de login
 
-- **Prioridad:** P1 · **Estimación:** 2 h · **Depende de:** T-10, T-09 · **Estado:** 🟡 Escrito, falta ejecutar
+- **Prioridad:** P1 · **Estimación:** 2 h · **Depende de:** T-10, T-09 · **Estado:** ✅ Hecho
 - **Qué:** formulario de correo y contraseña, con redirección a `/admin`.
 - **Criterios de aceptación:**
   - [x] Error genérico para credenciales inválidas.
@@ -378,7 +390,7 @@ Convenciones:
 
 #### T-12 · `ProtectedRoute`
 
-- **Prioridad:** P1 · **Estimación:** 2 h · **Depende de:** T-10 · **Estado:** 🟡 Escrito, falta ejecutar
+- **Prioridad:** P1 · **Estimación:** 2 h · **Depende de:** T-10 · **Estado:** ✅ Hecho
 - **Qué:** componente que envuelve las rutas de administración.
 - **Criterios de aceptación:**
   - [x] Sin sesión redirige a `/login`.
@@ -388,7 +400,7 @@ Convenciones:
 
 #### T-13 · Navegación de administración y logout
 
-- **Prioridad:** P1 · **Estimación:** 1 h · **Depende de:** T-09, T-10 · **Estado:** 🟡 Escrito, falta ejecutar
+- **Prioridad:** P1 · **Estimación:** 1 h · **Depende de:** T-09, T-10 · **Estado:** ✅ Hecho
 - **Qué:** barra del panel con enlaces y botón "Salir".
 - **Criterios de aceptación:**
   - [x] Logout cierra sesión y redirige a `/`.
@@ -400,15 +412,15 @@ Convenciones:
 - **Prioridad:** P1 · **Estimación:** 1 h · **Depende de:** T-01
 - **Qué:** crear en Firebase Authentication el usuario `admin@admin.com` con contraseña `admin123` y documentarlo.
 - **Criterios de aceptación:**
-  - [ ] El usuario existe y puede iniciar sesión.
-  - [ ] Credenciales documentadas en este archivo y en el espacio de entrega.
-  - [ ] Se indica en la entrega si se agregaron otros usuarios.
+  - [x] El usuario existe y puede iniciar sesión.
+  - [x] Credenciales documentadas en este archivo y en el espacio de entrega.
+  - [x] Se indica en la entrega si se agregaron otros usuarios.
 
 ### Épica 4 · Extra opcional
 
 #### T-15 · Editar producto
 
-- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-06, T-07 · **Estado:** 🟡 Escrito, falta ejecutar
+- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-06, T-07 · **Estado:** ✅ Hecho
 - **Criterios de aceptación:**
   - [x] Ruta `/admin/editar/:id` con el formulario precargado.
   - [x] Guardar actualiza el documento y el catálogo público.
@@ -416,7 +428,7 @@ Convenciones:
 
 #### T-16 · Eliminar producto
 
-- **Prioridad:** P2 · **Estimación:** 2 h · **Depende de:** T-07 · **Estado:** 🟡 Escrito, falta ejecutar
+- **Prioridad:** P2 · **Estimación:** 2 h · **Depende de:** T-07 · **Estado:** ✅ Hecho
 - **Criterios de aceptación:**
   - [x] Confirmación explícita antes de borrar.
   - [x] El producto desaparece del catálogo en tiempo real.
@@ -424,7 +436,7 @@ Convenciones:
 
 #### T-17 · Persistir órdenes de compra
 
-- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-02 · **Estado:** 🟡 Escrito, falta ejecutar
+- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-02 · **Estado:** ✅ Hecho
 - **Qué:** `orderService.createOrder()` y conectar el checkout.
 - **Criterios de aceptación:**
   - [x] Se crea un documento en `orders` con comprador, ítems, total y `serverTimestamp()`.
@@ -434,7 +446,7 @@ Convenciones:
 
 #### T-18 · Lista de órdenes en el panel
 
-- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-17, T-09 · **Estado:** 🟡 Escrito, falta ejecutar
+- **Prioridad:** P2 · **Estimación:** 3 h · **Depende de:** T-17, T-09 · **Estado:** ✅ Hecho
 - **Criterios de aceptación:**
   - [x] `/admin/ordenes` lista las órdenes por fecha descendente.
   - [x] Muestra comprador, cantidad de ítems, total y fecha.
@@ -443,13 +455,14 @@ Convenciones:
 
 #### T-19 · Reglas de seguridad de Firestore (recomendado)
 
-- **Prioridad:** P2 · **Estimación:** 1 h · **Depende de:** T-01
-- **Qué:** `productos` con lectura pública y escritura solo autenticada; `orders` con creación pública y lectura solo autenticada.
+- **Prioridad:** P2 · **Estimación:** 1 h · **Depende de:** T-01 · **Estado:** ✅ Hecho
+- **Qué:** `productos` con lectura pública y escritura autenticada —salvo el descuento de stock—; `orders` con creación pública validada y lectura solo autenticada. Storage: lectura pública de imágenes, subida y borrado con sesión.
 - **Criterios de aceptación:**
-  - [ ] Un visitante no puede escribir en `productos`.
-  - [ ] Un visitante no puede leer `orders`.
-  - [ ] El panel sigue funcionando con la sesión del administrador.
-- **Nota:** no está en la consigna, pero un evaluador técnico lo va a mirar.
+  - [x] Un visitante no puede publicar, renombrar, cambiar el precio ni borrar un producto.
+  - [x] Un visitante solo puede **bajar** `stock`, como entero y nunca por debajo de cero (`descuentaStock()`), porque la compra no exige cuenta.
+  - [x] Un visitante no puede leer `orders`.
+  - [x] El panel sigue funcionando con la sesión del administrador.
+- **Nota:** no está en la consigna, pero un evaluador técnico lo va a mirar. El límite conocido —un cliente hostil podría bajar stock sin comprar— se cierra definitivamente con una Cloud Function.
 
 ---
 
@@ -467,24 +480,26 @@ Ruta crítica: **T-01 → T-02 → T-05 → T-04 → T-06 → T-07**. Todo lo de
 
 ---
 
-## 9. Riesgos y decisiones abiertas
+## 9. Riesgos y decisiones
 
 | Riesgo | Impacto | Mitigación |
 |---|---|---|
-| Credenciales de Firebase en el repositorio | Seguridad | Variables `VITE_*` en `.env.local`; documentar en `.env.example` |
-| `.env.example` ignorado por `.env*` | No se versiona la plantilla | Agregar `!.env.example` a `.gitignore` |
-| Subida de imagen que falla después de crear el producto | Datos inconsistentes | Subir primero la imagen; si falla, no crear el documento |
-| Carrito con productos borrados | Error en la vista | `CartContext` ya reconcilia; verificar con T-16 |
-| `/admin` responde 404 en Vercel | Requisito EM-7 incompleto | El rewrite existe; probar el deep link después de T-07 |
-| El docente no puede entrar | Entrega no verificable | T-14 y credenciales informadas |
-| Datos de Firestore sin orden | Catálogo inestable | `orderBy('nombre')` o `orderBy('creadoEn')` en la consulta |
+| Credenciales de Firebase en el repositorio | Seguridad | Variables `VITE_*` en `.env.local`; plantilla sin valores en `.env.example` |
+| `.env.example` ignorado por `.env*` | No se versiona la plantilla | Resuelto: `!.env.example` en `.gitignore` |
+| Subida de imagen que falla después de crear el producto | Datos inconsistentes | Resuelto: se sube primero la imagen; si falla, no se crea el documento |
+| Carrito con productos borrados | Error en la vista | `CartContext` reconcilia y avisa qué se quitó |
+| `/admin` responde 404 en Vercel | Requisito EM-7 incompleto | Resuelto: rewrite verificado, `/admin` y `/admin/nuevo` devuelven 200 |
+| El docente no puede entrar | Entrega no verificable | Resuelto: `admin@admin.com` / `admin123` verificado contra Firebase Auth |
+| Descuento de stock hecho por el cliente | Un cliente hostil puede bajar stock sin comprar | Regla acotada a `stock` (entero, decreciente, ≥ 0). Cierre definitivo: Cloud Function |
+| Datos de Firestore sin orden | Catálogo inestable | `orderBy('nombre')` en el catálogo y `orderBy('fecha', 'desc')` en las órdenes |
 
-Decisiones que hay que tomar antes de codear:
+Decisiones tomadas:
 
-1. **ID del producto:** el documento de Firestore es la fuente de verdad. El seed (T-05) conserva los IDs `1`…`6` con `setDoc`, así los enlaces existentes siguen funcionando; los productos nuevos usan el ID autogenerado.
-2. **Imagen:** subir a Storage o pedir una URL externa. Storage es más fiel a la consigna ("servicio de imagen").
-3. **`public/productos.json`:** respaldo de lectura o eliminarlo después de T-05.
-4. **Dashboard:** la consigna lo marca opcional. Si no se hace, el panel puede ser directamente el listado + formulario.
+1. **ID del producto:** el documento de Firestore es la fuente de verdad. El seed conserva los IDs `1`…`6` con `setDoc`, así los enlaces existentes siguen funcionando; los productos nuevos usan el ID autogenerado.
+2. **Imagen:** Storage, porque la consigna pide un "servicio de imagen". `imageService` valida tipo y tamaño en cliente y `storage.rules` repite la validación del lado del servidor.
+3. **`public/productos.json`:** queda como fuente del seed (`npm run seed`), no como respaldo de lectura. La app lee siempre de Firestore.
+4. **Dashboard:** la consigna lo marca opcional. El panel arranca en el listado de productos, que ya incluye alta, edición, baja y acceso a órdenes.
+5. **Stock:** se descuenta en una transacción de cliente porque la compra no exige cuenta. La regla de Firestore acota la escritura a ese único campo.
 
 ---
 
@@ -492,24 +507,24 @@ Decisiones que hay que tomar antes de codear:
 
 **Funcional**
 
-- [ ] El catálogo se lee de Firestore.
-- [ ] El detalle se lee de Firestore.
-- [ ] Un producto nuevo se ve sin recargar.
-- [ ] El alta funciona con imagen.
-- [ ] `/admin` entra directo en producción.
-- [ ] Login con `admin@admin.com` / `admin123`.
-- [ ] `/admin` está protegido sin sesión.
-- [ ] Layouts público y admin separados.
-- [ ] El carrito y el checkout siguen funcionando después de la migración.
+- [x] El catálogo se lee de Firestore.
+- [x] El detalle se lee de Firestore.
+- [x] Un producto nuevo se ve sin recargar.
+- [x] El alta funciona con imagen.
+- [x] `/admin` entra directo en producción.
+- [x] Login con `admin@admin.com` / `admin123`.
+- [x] `/admin` está protegido sin sesión.
+- [x] Layouts público y admin separados.
+- [x] El carrito y el checkout siguen funcionando después de la migración.
 
 **Entrega**
 
-- [ ] `npm run build` sin errores.
-- [ ] Deploy actualizado en Vercel.
-- [ ] Link del repo y del deploy informados.
-- [ ] Credenciales del administrador informadas.
-- [ ] `README` con instrucciones de instalación y variables de entorno.
-- [ ] `public/productos.json` y `docs/` en un estado coherente.
+- [x] `npm run build` sin errores.
+- [x] Deploy actualizado en Vercel.
+- [x] Link del repo y del deploy informados.
+- [x] Credenciales del administrador informadas.
+- [x] `README` con instrucciones de instalación y variables de entorno.
+- [x] `public/productos.json` y `docs/` en un estado coherente.
 
 ---
 
@@ -517,16 +532,19 @@ Decisiones que hay que tomar antes de codear:
 
 | Afirmación | Verificación |
 |---|---|
-| Firebase instalado pero no conectado | `package.json` declara `firebase@^13`; nada importa `src/config/firebase.js` |
-| El catálogo es local | `src/context/DatosContext.jsx:14` → `const URL_CATALOGO = '/productos.json'` |
-| El fetch es estático | `src/context/DatosContext.jsx:20` → `fetch(URL_CATALOGO, { cache: 'force-cache' })` |
-| Hay un solo layout | `src/App.jsx:45` envuelve todas las rutas con `Layout` |
-| No existe `/admin` | `src/App.jsx:48-53` solo define `/`, `/receta`, `/producto/:id`, `/carrito`, `/checkout` y `*` |
-| El rewrite existe | `vercel.json:2` → `{ "source": "/(.*)", "destination": "/index.html" }` |
-| El checkout no persiste | `src/components/Checkout/Checkout.jsx:30` genera el número con `Math.random()` |
-| Sin credenciales Firebase | `.env.local` solo contiene `VERCEL_OIDC_TOKEN` |
-| El carrito persiste | `src/context/CartContext.jsx:41` → `localStorage.setItem(...)` |
-| El carrito respeta stock | `src/context/CartContext.jsx:59-106` reconcilia contra el catálogo |
+| Firebase está conectado | `src/config/firebase.js` inicializa `app`, `db`, `auth` y `storage` desde `VITE_FIREBASE_*` |
+| El catálogo es remoto y realtime | `src/context/DatosContext.jsx` → `subscribeProducts()` (`onSnapshot`), sin `fetch` |
+| El detalle sale del mismo snapshot | `ItemDetailContainer` resuelve con el `porId` del contexto |
+| Hay dos layouts | `src/App.jsx` anida las rutas públicas en `PublicLayout` y las de `/admin` en `AdminLayout` |
+| `/admin` existe y está protegido | `src/App.jsx` → `<Route element={<ProtectedRoute />}>` con `/admin`, `/admin/nuevo`, `/admin/editar/:id`, `/admin/ordenes` |
+| El rewrite existe y responde | `vercel.json:2` → `{"source":"/(.*)","destination":"/index.html"}`; `/admin` devuelve 200 con `index.html` |
+| El checkout persiste | `src/services/orderService.js` → `createOrder()` escribe en `orders` con `serverTimestamp()` |
+| El stock baja al comprar | `createOrder()` usa `runTransaction`: lee, valida y descuenta en la misma operación |
+| El total no lo manda el cliente | `createOrder()` recalcula precio y total con los documentos leídos |
+| Las reglas de datos existen | `firestore.rules` (productos, órdenes y `descuentaStock()`) y `storage.rules` (imágenes) |
+| Hay credenciales de Firebase | `.env.local` contiene las seis `VITE_FIREBASE_*`; `.env.example` versiona la plantilla |
+| El carrito persiste | `src/context/CartContext.jsx` → `localStorage.setItem(...)` |
+| El carrito respeta stock | `src/context/CartContext.jsx` reconcilia contra el catálogo al hidratar y al cambiar cantidades |
 
 ## Anexo B · Modelo de datos propuesto
 

@@ -102,7 +102,7 @@ const CalculadoraReceta = ({ producto, compacto = false }) => {
                 disabled={porciones === 1}
               >
                 <span aria-hidden="true">−</span>
-                <span className="receta-sr">Menos porciones</span>
+                <span className="sr">Menos porciones</span>
               </button>
               <output className="receta-valor" aria-live="polite">
                 {porciones}
@@ -114,7 +114,7 @@ const CalculadoraReceta = ({ producto, compacto = false }) => {
                 disabled={porciones === PORCIONES_MAX}
               >
                 <span aria-hidden="true">+</span>
-                <span className="receta-sr">Más porciones</span>
+                <span className="sr">Más porciones</span>
               </button>
             </div>
           </fieldset>

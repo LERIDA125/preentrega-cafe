@@ -4,8 +4,8 @@ rules_version = '2';
  * Reglas de Firestore.
  *
  * La UI protege pantallas; esto protege datos. Cualquiera puede leer el
- * catálogo y crear una orden, pero escribir productos y leer órdenes exige
- * sesión iniciada.
+ * catálogo, crear una orden y descontar stock al comprar. Publicar o editar
+ * productos y leer órdenes exige sesión iniciada.
  *
  * Para publicarlas: consola de Firebase > Firestore > Reglas, o
  * `firebase deploy --only firestore:rules` con `firebase.json` (ya incluido).
@@ -13,10 +13,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Catálogo: lectura pública, escritura solo con sesión.
+    // Catálogo: lectura pública. Publicar, editar o borrar exige sesión; bajar
+    // stock es la única escritura que puede hacer un comprador anónimo.
     match /productos/{id} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow create, delete: if request.auth != null;
+      allow update: if request.auth != null || descuentaStock();
     }
 
     // Órdenes: cualquiera puede comprar, solo el panel las lee.
@@ -51,6 +53,30 @@ service cloud.firestore {
         && orden.items is list
         && orden.items.size() > 0
         && orden.items.size() <= 50;
+    }
+
+    /**
+     * Única escritura pública sobre el catálogo: bajar `stock`.
+     *
+     * El comprador no está autenticado (no hay cuentas de cliente), pero la
+     * orden y el descuento son la misma transacción, así que la regla tiene que
+     * dejarla pasar. Se acota todo lo que se puede acotar: sólo el campo
+     * `stock`, sólo un entero, sólo hacia abajo y nunca por debajo de cero.
+     * Cambiar precio, nombre o imagen sigue exigiendo sesión.
+     *
+     * Límite conocido: un cliente hostil podría bajar stock sin comprar. Eso es
+     * griefing, no fraude (no puede subirlo ni cambiar el precio), y es el
+     * precio de no tener funciones de servidor. La solución definitiva es una
+     * Cloud Function que haga el descuento con privilegios de admin.
+     */
+    function descuentaStock() {
+      let antes = resource.data;
+      let despues = request.resource.data;
+
+      return despues.diff(antes).affectedKeys().hasOnly(['stock'])
+        && despues.stock is int
+        && despues.stock >= 0
+        && despues.stock < antes.stock;
     }
   }
 }

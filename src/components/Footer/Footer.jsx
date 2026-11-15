@@ -12,6 +12,28 @@ const iniciales = (nombre) =>
     .map((palabra) => palabra[0])
     .join('')
 
+const IconoCandado = () => (
+  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+    <path
+      d="M5 7V5.5a3 3 0 0 1 6 0V7"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+    <rect
+      x="3.5"
+      y="7"
+      width="9"
+      height="6.5"
+      rx="1.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+    />
+  </svg>
+)
+
 const Footer = () => {
   return (
     <footer className="pie">
@@ -30,6 +52,14 @@ const Footer = () => {
               <Link to="/">Catálogo</Link>
               <Link to="/receta">Calculadora de receta</Link>
               <Link to="/carrito">Carrito</Link>
+              <Link
+                to="/login"
+                className="pie-acceso"
+                aria-label="Acceso al panel de administración"
+              >
+                <IconoCandado />
+                Acceso
+              </Link>
             </nav>
 
             <ul className="pie-equipo">
